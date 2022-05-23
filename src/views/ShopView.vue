@@ -1,5 +1,5 @@
 <template>
-  <div id="SHOP-VIEW">
+  <div id="SHOP-VIEW" class="m-0 p-0">
     <!-- Page Header Start -->
     <div
       class="container-fluid page-header py-6 wow fadeIn"
@@ -16,8 +16,36 @@
     <div class="container-fluid box-all p-0">
       <div class="search-all">
         <div class="search-left">
-          <b-row class="mt-2 mb-2 text-center">
-            <div class="col-sm-4">
+          <div class="mt-2 mb-2 text-center">
+            <div style="display: inline-block; width: 100px; margin-right: 5px">
+              <b-form-select
+                class="form-select"
+                v-model="sidoCode"
+                :options="sidos"
+                @change="gugunList"
+              ></b-form-select>
+            </div>
+            <div style="display: inline-block; width: 110px; margin-right: 5px">
+              <b-form-select
+                class="form-select"
+                v-model="gugunCode"
+                :options="guguns"
+                @change="dongList"
+              ></b-form-select>
+            </div>
+            <div style="display: inline-block; width: 160px">
+              <b-form-select
+                class="form-select"
+                v-model="dongCode"
+                :options="dongs"
+                @change="[searchClear(), shopList()]"
+              ></b-form-select>
+            </div>
+          </div>
+        </div>
+        <div class="search-right">
+          <div class="mt-2 mb-2 text-center">
+            <div style="display: inline-block; width: 120px" class="m-2">
               <select
                 class="form-select"
                 aria-label="Default select example"
@@ -28,7 +56,7 @@
                 <option value="ROAD_ADDRESS">도로명</option>
               </select>
             </div>
-            <div class="col-sm-5">
+            <div style="display: inline-block; width: 300px" class="m-2">
               <input
                 class="form-control"
                 type="text"
@@ -36,66 +64,43 @@
                 v-model="word"
               />
             </div>
-            <button
-              type="button"
-              class="btn btn-outline-primary col-sm-3"
-              @click="shopList"
-            >
-              검색
-            </button>
-          </b-row>
-        </div>
-        <div class="search-right">
-          <div class="mt-2 mb-2 text-center">
             <div style="display: inline-block" class="m-2">
-              <b-form-select
-                class="form-select"
-                v-model="sidoCode"
-                :options="sidos"
-                @change="gugunList"
-              ></b-form-select>
-            </div>
-            <div style="display: inline-block" class="m-2">
-              <b-form-select
-                class="form-select"
-                v-model="gugunCode"
-                :options="guguns"
-                @change="dongList"
-              ></b-form-select>
-            </div>
-            <div style="display: inline-block" class="m-2">
-              <b-form-select
-                class="form-select"
-                v-model="dongCode"
-                :options="dongs"
-                @change="[searchClear(), shopList()]"
-              ></b-form-select>
-            </div>
-            <div style="display: inline-block" class="m-2">
-              <button
-                type="button"
-                class="btn btn-outline-primary"
-                @click="mst"
-                v-if="!condition"
-              >
-                최적경로탐색
-              </button>
               <button
                 type="button"
                 class="btn btn-outline-primary"
                 @click="shopList"
-                v-if="condition"
               >
-                원래대로
+                검색
               </button>
             </div>
+          </div>
+          <div style="display: inline-block" class="m-2">
+            <button
+              type="button"
+              class="btn btn-outline-primary"
+              @click="mst"
+              v-if="!condition"
+            >
+              최적경로탐색
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline-primary"
+              @click="shopList"
+              v-if="condition"
+            >
+              원래대로
+            </button>
           </div>
         </div>
       </div>
       <div class="content-all">
         <div class="content-left">
           <div style="height: 1000px; margin-bottom: 2%; overflow: auto">
-            <div v-if="listGetters && listGetters.length > 0">
+            <b-container
+              v-if="listGetters && listGetters.length > 0"
+              class="bv-example-row mt-3"
+            >
               <shop-list-item
                 v-for="(shop, index) in listGetters"
                 :key="index"
@@ -130,8 +135,12 @@
                   </tr>
                 </tbody>
               </table> -->
-            </div>
-            <div v-else>상가 목록을 검색해주세요</div>
+            </b-container>
+            <b-container v-else class="bv-example-row mt-3">
+              <b-row>
+                <b-col><b-alert show>상가 목록이 없습니다.</b-alert></b-col>
+              </b-row>
+            </b-container>
           </div>
         </div>
         <div class="content-right">
@@ -684,7 +693,7 @@ div >>> .search-left {
   align-items: center;
   width: 400px;
   height: 100%;
-  padding: 0px 20px;
+  padding: 0px;
   border-right: 1px solid rgb(231, 231, 231);
   position: relative;
 }

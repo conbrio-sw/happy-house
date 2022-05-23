@@ -1,6 +1,6 @@
 <template>
   <b-row
-    class="m-2"
+    class="mt-2 mb-2"
     @click="selectHouse"
     @mouseover="colorChange(true)"
     @mouseout="colorChange(false)"
@@ -17,7 +17,7 @@
       [{{ house.aptCode }}] {{ house.aptName }}
       {{ house.floor }}
     </b-col> -->
-    <hr />
+
     <div>
       <div class="product-item d-flex flex-column bg-white rounded h-100">
         <div class="p-2">
@@ -49,6 +49,8 @@
         </div>
       </div>
     </div>
+    <div class="mt-2"></div>
+    <hr />
   </b-row>
 </template>
 

@@ -1,6 +1,7 @@
 <template>
-  <b-row class="mt-2 mb-2">
-    <!-- <b-col cols="2" class="text-center align-self-center">
+  <div>
+    <b-row class="mt-2 mb-2">
+      <!-- <b-col cols="2" class="text-center align-self-center">
       <b-img
         thumbnail
         src="https://picsum.photos/250/250/?image=58"
@@ -12,7 +13,6 @@
       {{ house.floor }}
     </b-col> -->
 
-    <div>
       <div
         class="product-item d-flex flex-column bg-white rounded h-100"
         :class="{ add: isColor }"
@@ -33,9 +33,9 @@
           </div>
         </div>
       </div>
-    </div>
+    </b-row>
     <hr />
-  </b-row>
+  </div>
 </template>
 
 <script>

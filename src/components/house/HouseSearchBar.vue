@@ -2,39 +2,8 @@
   <div class="container-fluid box-all p-0">
     <div class="search-all">
       <div class="search-left">
-        <b-row class="mt-2 mb-2 text-center">
-          <div class="col-sm-4">
-            <select
-              class="form-select"
-              aria-label="Default select example"
-              v-model="key"
-            >
-              <option value="aptName">아파트 명</option>
-              <option value="buildyear">건축년도</option>
-              <option value="dealAmount">거래금액</option>
-              <option value="area">넓이</option>
-            </select>
-          </div>
-          <div class="col-sm-5">
-            <input
-              class="form-control"
-              type="text"
-              placeholder="Search"
-              v-model="word"
-            />
-          </div>
-          <button
-            type="button"
-            class="btn btn-outline-primary col-sm-3"
-            @click="searchApt"
-          >
-            검색
-          </button>
-        </b-row>
-      </div>
-      <div class="search-right">
         <div class="mt-2 mb-2 text-center">
-          <div style="display: inline-block" class="m-2">
+          <div style="display: inline-block; width: 110px; margin-right: 5px">
             <b-form-select
               class="form-select"
               v-model="sidoCode"
@@ -42,7 +11,7 @@
               @change="gugunList"
             ></b-form-select>
           </div>
-          <div style="display: inline-block" class="m-2">
+          <div style="display: inline-block; width: 110px; margin-right: 5px">
             <b-form-select
               class="form-select"
               v-model="gugunCode"
@@ -50,13 +19,68 @@
               @change="dongList"
             ></b-form-select>
           </div>
-          <div style="display: inline-block" class="m-2">
+          <div style="display: inline-block; width: 160px">
             <b-form-select
               class="form-select"
               v-model="dongCode"
               :options="dongs"
               @change="[searchClear(), searchApt()]"
             ></b-form-select>
+          </div>
+        </div>
+      </div>
+      <div class="search-right">
+        <div class="mt-2 mb-2 text-center">
+          <div style="display: inline-block; width: 120px" class="m-2">
+            <select
+              class="form-select"
+              aria-label="Default select example"
+              v-model="key"
+              @change="searchClear"
+            >
+              <option value="aptName">아파트 명</option>
+              <option value="buildyear">건축년도</option>
+              <option value="dealAmount">거래금액</option>
+              <option value="area">넓이</option>
+            </select>
+          </div>
+          <div
+            v-if="searchTypeIsText"
+            style="display: inline-block; width: 300px"
+            class="m-2"
+          >
+            <input
+              class="form-control"
+              type="text"
+              placeholder="Search"
+              v-model="word"
+            />
+          </div>
+          <div v-else style="display: inline-block; width: 300px" class="m-2">
+            <input
+              class="form-control"
+              type="number"
+              placeholder="최소"
+              v-model="minValue"
+              style="display: inline-block; width: 145px; margin-right: 10px"
+            />
+            <input
+              class="form-control"
+              type="number"
+              placeholder="최대"
+              v-model="maxValue"
+              style="display: inline-block; width: 145px"
+            />
+          </div>
+          <div style="display: inline-block" class="m-2">
+            <button
+              type="button"
+              class="btn btn-outline-primary"
+              @click="searchApt"
+              style="width: 100%"
+            >
+              검색
+            </button>
           </div>
         </div>
       </div>
@@ -97,6 +121,8 @@ export default {
       geocoder: null,
       key: "aptName",
       word: "",
+      minValue: "",
+      maxValue: "",
     };
   },
   mounted() {
@@ -119,6 +145,10 @@ export default {
     // sidos() {
     //   return this.$store.state.sidos;
     // },
+    searchTypeIsText() {
+      if (this.key == "aptName") return true;
+      else return false;
+    },
   },
   created() {
     // this.$store.dispatch("getSido");
@@ -137,8 +167,9 @@ export default {
     //   this.getSido();
     // },
     searchClear() {
-      console.log(this.word);
       this.word = "";
+      this.minValue = "";
+      this.maxValue = "";
     },
     gugunList() {
       console.log(this.sidoCode);
@@ -162,6 +193,8 @@ export default {
         dong: this.dongCode,
         key: this.key,
         word: this.word,
+        minValue: this.minValue,
+        maxValue: this.maxValue,
       };
       if (this.dongCode) {
         await this.getHouseList(params);
@@ -357,7 +390,7 @@ div >>> .search-left {
   align-items: center;
   width: 400px;
   height: 100%;
-  padding: 0px 20px;
+  padding: 0px;
   border-right: 1px solid rgb(231, 231, 231);
   position: relative;
 }
