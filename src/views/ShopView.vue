@@ -16,7 +16,7 @@
     <div class="container-fluid box-all p-0">
       <div class="search-all">
         <div class="search-left">
-          <div class="mt-2 mb-2 text-center">
+          <div class="mt-2 mb-2 text-center mx-auto">
             <div style="display: inline-block; width: 100px; margin-right: 5px">
               <b-form-select
                 class="form-select"
@@ -215,9 +215,8 @@ export default {
       "CLEAR_DONG_LIST",
       "CLEAR_SHOP_LIST",
     ]),
-    test(event) {
-      alert(event);
-      console.log(event);
+    test(event, index) {
+      alert(index);
     },
     searchClear() {
       console.log(this.word);
@@ -370,12 +369,14 @@ export default {
       this.removeMarker();
       console.log(this);
       var self = this;
-      console.log("===================");
+      var listItem = document.querySelectorAll(".product-item");
+
       console.log(self);
       for (var i = 0; i < places.length; i++) {
         var placePosition = new kakao.maps.LatLng(places[i].lat, places[i].lng);
         var marker = this.addMarker(placePosition, i);
         var itemEl = this.getListItem(i, places[i]); // 검색 결과 항목 Element를 생성합니다
+
         //console.log(i);
         // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
         // LatLngBounds 객체에 좌표를 추가합니다
@@ -389,15 +390,14 @@ export default {
         // 해당 장소에 인포윈도우에 장소명을 표시합니다
         // mouseout 했을 때는 인포윈도우를 닫습니다
 
+        //var ii = i;
+
         (function (marker, title, code, place, map) {
           kakao.maps.event.addListener(marker, "click", function () {
-            self.displayInfowindow(marker, title, place);
-          });
-
-          kakao.maps.event.addListener(map, "click", function () {
             if (self.customOverlay != null) {
               self.customOverlay.setMap(null);
             }
+            self.displayInfowindow(marker, title, place);
           });
 
           itemEl.onmouseover = function () {
@@ -409,7 +409,15 @@ export default {
               self.customOverlay.setMap(null);
             }
           };
+          listItem[i].onmouseover = function () {
+            if (self.customOverlay != null) {
+              self.customOverlay.setMap(null);
+            }
+            self.displayInfowindow(marker, title, place);
+          };
         })(marker, places[i].shopName, places[i].shopKind, places[i], this.map);
+
+        //console.log(listItem[ii].dataset.param);
 
         // kakao.maps.event.addListener(marker, "click", function () {
         //   self.displayInfowindow(marker, title, place);
@@ -481,32 +489,45 @@ export default {
 
       return el;
     },
-
     displayInfowindow(marker, title, place) {
-      console.log("displayinfo");
       var content = `
-		<div class="overlaybox">
-			<div class="boxtitle">${title}</div>
-			<div class="first"><img src="/img/apt.png" style="width:247px; height:136px;" alt=""></div>
-			<ul>
-				<li class="up">
-					<span class="title">이름</span>
-					<span class="count">${place.buildYear}</span>
-				</li>
-				<li>
-					<span class="title">주소</span>
-					<span class="count">${place.roadAddress}</span>
-				</li>
-				<li>
-					<span class="title">최신거래금액</span>
-					<span class="count">${place.recentPrice}</span>
-				</li>
-				<li>
-					<span class="last" id="recenthistor" data-toggle="modal" data-target="#myModal">아파트정보 update</span>
-				</li>
-			</ul>
-		</div>
-	`;
+      <!-- Profile Image -->
+    <div class="card card-primary card-outline" style="width: 300px">
+      <div class="card-body box-profile">
+        <div class="text-center" style="height: 200px">
+          <img
+            class="profile-user-img img-fluid img-circle"
+            src="/img/shop/info.jpg"
+            alt="User profile picture"
+            style="height: 190px"
+          />
+        </div>
+
+        <h3 class="profile-username text-center" style="overflow:hidden">${title}</h3>
+
+        <p class="text-muted text-center">come on!</p>
+
+        <ul class="list-group list-group-unbordered mb-3" style="overflow:hidden">
+          <li class="list-group-item">
+            <b>업종</b> <a class="float-right">${place.shopKind}</a>
+          </li>
+          <li class="list-group-item">
+            <b>주소</b> <a class="float-right">${place.roadAddress.substr(
+              place.roadAddress.indexOf(" ")
+            )}</a>
+          </li>
+          <li class="list-group-item">
+            <b>Friends</b> <a class="float-right">13,287</a>
+          </li>
+        </ul>
+
+        <a href="#" class="btn btn-primary btn-block"><b>Follow</b></a>
+        <div class="close" title="닫기" id="close"></div>
+      </div>
+      <!-- /.card-body -->
+      
+      `;
+
       var position = new kakao.maps.LatLng(
         marker.getPosition().getLat() + 0.00033,
         marker.getPosition().getLng() - 0.00003
@@ -516,8 +537,14 @@ export default {
         content: content,
         xAnchor: 0.3,
         yAnchor: 0.91,
+        clickable: true, // 커스텀 오버레이 클릭 시 지도에 이벤트를 전파하지 않도록 설정한다
       });
+      console.log(this.customOverlay);
+      var self = this;
       this.customOverlay.setMap(this.map);
+      document.querySelector("#close").onclick = function () {
+        self.customOverlay.setMap(null);
+      };
     },
     removeAllChildNods(el) {
       while (el.hasChildNodes()) {
@@ -554,116 +581,6 @@ export default {
   width: 400px;
 }
 
-#map >>> .overlaybox {
-  position: relative;
-  width: 360px;
-  height: 350px;
-  background: url("https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/box_movie.png")
-    no-repeat;
-  padding: 15px 10px;
-}
-#map >>> .overlaybox div,
-ul {
-  overflow: hidden;
-  margin: 0;
-  padding: 0;
-}
-#map >>> .overlaybox li {
-  list-style: none;
-}
-#map >>> .overlaybox .boxtitle {
-  color: #fff;
-  font-size: 16px;
-  font-weight: bold;
-  background: url("https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/arrow_white.png")
-    no-repeat right 120px center;
-  margin-bottom: 8px;
-}
-#map >>> .overlaybox .first {
-  position: relative;
-  width: 247px;
-  height: 136px;
-  margin-bottom: 8px;
-}
-#map >>> .first .text {
-  color: #fff;
-  font-weight: bold;
-}
-#map >>> .first .triangle {
-  position: absolute;
-  width: 48px;
-  height: 48px;
-  top: 0;
-  left: 0;
-  background: url("https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/triangle.png")
-    no-repeat;
-  padding: 6px;
-  font-size: 18px;
-}
-#map >>> .first .movietitle {
-  position: absolute;
-  width: 100%;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.4);
-  padding: 7px 15px;
-  font-size: 14px;
-}
-#map >>> .overlaybox ul {
-  width: 247px;
-}
-#map >>> .overlaybox li {
-  position: relative;
-  margin-bottom: 2px;
-  background: #2b2d36;
-  padding: 5px 10px;
-  color: #aaabaf;
-  line-height: 1;
-}
-#map >>> .overlaybox li span {
-  display: inline-block;
-}
-#map >>> .overlaybox li .number {
-  font-size: 16px;
-  font-weight: bold;
-}
-#map >>> .overlaybox li .title {
-  font-size: 13px;
-}
-#map >>> .overlaybox li .last {
-  font-size: 12px;
-  margin-right: 15px;
-}
-#map >>> .overlaybox ul .arrow {
-  position: absolute;
-  margin-top: 8px;
-  right: 25px;
-  width: 5px;
-  height: 3px;
-  background: url("https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/updown.png")
-    no-repeat;
-}
-#map >>> .overlaybox li .up {
-  background-position: 0 -40px;
-}
-#map >>> .overlaybox li .down {
-  background-position: 0 -60px;
-}
-#map >>> .overlaybox li .count {
-  position: absolute;
-  margin-top: 5px;
-  right: 15px;
-  font-size: 10px;
-}
-#map >>> .overlaybox li:hover {
-  color: #fff;
-  background: #d24545;
-}
-#map >>> .overlaybox li:hover .up {
-  background-position: 0 0px;
-}
-#map >>> .overlaybox li:hover .down {
-  background-position: 0 -20px;
-}
 ::-webkit-scrollbar {
   width: 10px;
 }
@@ -738,5 +655,19 @@ div >>> .content-right {
   width: 100%;
   height: calc(100% - 149px);
   position: relative;
+}
+
+#map >>> .close {
+  position: absolute;
+  bottom: 25px;
+  right: 10px;
+  color: #888;
+  width: 17px;
+  height: 17px;
+  background: url("https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/overlay_close.png");
+  /*  */
+}
+#map >>> .float-right {
+  float: right !important;
 }
 </style>
