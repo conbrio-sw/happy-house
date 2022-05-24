@@ -364,7 +364,6 @@ export default {
       return marker;
     },
     removeMarker() {
-      console.log("마커지우는중");
       for (var i = 0; i < this.markers.length; i++) {
         this.markers[i].setMap(null);
       }
@@ -450,14 +449,14 @@ export default {
         "    </div>" +
         "</div>";
       var position = new kakao.maps.LatLng(
-        marker.getPosition().getLat(),
-        marker.getPosition().getLng()
+        marker.getPosition().getLat() + 0.00085,
+        marker.getPosition().getLng() - 0.00065
       );
       this.customOverlay = new kakao.maps.CustomOverlay({
         position: position,
         content: content,
-        xAnchor: 0.5,
-        yAnchor: 1,
+        xAnchor: 0.3,
+        yAnchor: 0.91,
         clickable: true, // 커스텀 오버레이 클릭 시 지도에 이벤트를 전파하지 않도록 설정한다
       });
       this.customOverlay.setMap(this.map);

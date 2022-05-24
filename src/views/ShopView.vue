@@ -107,34 +107,6 @@
                 :shop="shop"
                 :index="index"
               />
-              <!-- <table>
-                <colgroup>
-                  <col width="50" />
-                </colgroup>
-                <thead>
-                  <tr>
-                    <th></th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr
-                    style="cursor: pointer"
-                    v-for="(shop, index) in listGetters"
-                    v-bind:key="index"
-                  >
-                    <td>
-                      <input
-                        type="checkbox"
-                        id="checkedList"
-                        name="isSearch"
-                        :data-param="index"
-                      />
-                    </td>
-                    <shop-list-item :shop="shop" />
-                  </tr>
-                </tbody>
-              </table> -->
             </b-container>
             <b-container v-else class="bv-example-row mt-3">
               <b-row>
@@ -144,7 +116,43 @@
           </div>
         </div>
         <div class="content-right">
-          <div id="map" style="width: 100%; height: 1000px"></div>
+          <div class="map_wrap" style="height: 100%">
+            <div
+              id="map"
+              style="
+                width: 100%;
+                height: 100%;
+                position: relative;
+                overflow: hidden;
+              "
+            ></div>
+            <ul id="category">
+              <li id="BK9" data-order="0" @click.self="onClickCategory">
+                <span class="category_bg bank"></span>
+                은행
+              </li>
+              <li id="MT1" data-order="1" @click.self="onClickCategory">
+                <span class="category_bg mart"></span>
+                마트
+              </li>
+              <li id="PM9" data-order="2" @click.self="onClickCategory">
+                <span class="category_bg pharmacy"></span>
+                약국
+              </li>
+              <li id="OL7" data-order="3" @click.self="onClickCategory">
+                <span class="category_bg oil"></span>
+                주유소
+              </li>
+              <li id="CE7" data-order="4" @click.self="onClickCategory">
+                <span class="category_bg cafe"></span>
+                카페
+              </li>
+              <li id="CS2" data-order="5" @click.self="onClickCategory">
+                <span class="category_bg store"></span>
+                편의점
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -178,6 +186,10 @@ export default {
       word: "",
       //0521
       marker: null,
+      //0524
+      contentNode: null,
+      placeOverlay: null,
+      currCategory: null,
     };
   },
   created() {
@@ -219,6 +231,9 @@ export default {
       alert(index);
     },
     searchClear() {
+      this.currCategory = null;
+      this.changeCategoryClass();
+      this.removeMarker();
       console.log(this.word);
       this.word = "";
     },
@@ -243,10 +258,6 @@ export default {
       }
     },
     async mst() {
-      console.log(
-        this.marker.getPosition().getLat(),
-        this.marker.getPosition().getLng()
-      );
       var arrList = [];
       //#checkedList:checked
       document.querySelectorAll(".add").forEach((element) => {
@@ -254,7 +265,10 @@ export default {
         arrList.push(element.dataset.param);
       });
       console.log(arrList);
-      if (arrList.length == 0) {
+      if (this.currCategory != null || this.marker == null) {
+        console.log(this.currCategory, "yy", this.marker, "zz");
+        alert("최적경로를 탐색할 위치(동 검색 후)을 정해주세요");
+      } else if (arrList.length == 0) {
         alert("가고 싶은 상점을 체크하세요");
       } else {
         var obj = {
@@ -284,19 +298,7 @@ export default {
         }
       }
     },
-    // async getDongName() {
-    //   var dong = this.$store.state.user.dongCode;
 
-    //   try {
-    //     let { data } = await http.get("/shops/getDongCodes/" + dong); // params: params shorthand property, let response 도 제거
-    //     console.log(data);
-    //     var str =
-    //       " " + data.sidoName + " " + data.gugunName + " " + data.dongName;
-    //     document.querySelector("#myAreaName").innerHTML = str;
-    //   } catch (error) {
-    //     console.error(error);
-    //   }
-    // },
     async shopList() {
       this.CLEAR_SHOP_LIST();
       this.condition = false;
@@ -338,6 +340,7 @@ export default {
       // 지도를 생성합니다
       this.map = new kakao.maps.Map(mapContainer, mapOption);
       var self = this;
+      this.contentNode = document.createElement("div");
       kakao.maps.event.addListener(this.map, "click", function (mouseEvent) {
         // 클릭한 위도, 경도 정보를 가져옵니다
         var latlng = mouseEvent.latLng;
@@ -350,7 +353,32 @@ export default {
       });
 
       // 장소 검색 객체를 생성합니다
-      this.ps = new kakao.maps.services.Places();
+      this.ps = new kakao.maps.services.Places(this.map);
+
+      kakao.maps.event.addListener(this.map, "idle", this.searchPlaces);
+      // 지도에 idle 이벤트를 등록합니다
+
+      // 커스텀 오버레이의 컨텐츠 노드에 css class를 추가합니다
+      self.contentNode.className = "placeinfo_wrap";
+
+      // 커스텀 오버레이의 컨텐츠 노드에 mousedown, touchstart 이벤트가 발생했을때
+      // 지도 객체에 이벤트가 전달되지 않도록 이벤트 핸들러로 kakao.maps.event.preventMap 메소드를 등록합니다
+      self.addEventHandle(
+        self.contentNode,
+        "mousedown",
+        kakao.maps.event.preventMap
+      );
+      self.addEventHandle(
+        self.contentNode,
+        "touchstart",
+        kakao.maps.event.preventMap
+      );
+      self.placeOverlay = new kakao.maps.CustomOverlay({ zIndex: 1 });
+      // 커스텀 오버레이 컨텐츠를 설정합니다
+      self.placeOverlay.setContent(self.contentNode);
+
+      // 각 카테고리에 클릭 이벤트를 등록합니다
+      self.addCategoryClickEvent();
 
       // 검색 결과 목록이나 마커를 클릭했을 때 장소명을 표출할 인포윈도우를 생성합니다
       this.infowindow = new kakao.maps.InfoWindow({ zIndex: 1 });
@@ -358,6 +386,175 @@ export default {
       this.customOverlay;
       //주소-좌표 변환 객체를 생성합니다
       this.geocoder = new kakao.maps.services.Geocoder();
+    },
+    addEventHandle(target, type, callback) {
+      if (target.addEventListener) {
+        target.addEventListener(type, callback);
+      } else {
+        target.attachEvent("on" + type, callback);
+      }
+    },
+    searchPlaces() {
+      if (!this.currCategory) {
+        return;
+      }
+      console.log(this.currCategory, this.ps);
+      // 커스텀 오버레이를 숨깁니다
+      if (this.customOverlay != null) {
+        this.customOverlay.setMap(null);
+      }
+
+      this.removeMarker();
+
+      this.ps.categorySearch(this.currCategory, this.placesSearchCB, {
+        useMapBounds: true,
+      });
+    },
+    async placesSearchCB(data, status, pagination) {
+      // console.log(data);
+      //  var title = places[i].place_name;
+      //   var shopKind = places[i].category_group_name;
+      //   var roadAddress = places[i].address_name;
+      data.forEach(function (element) {
+        element.shopKind = element.category_group_name;
+        element.shopName = element.place_name;
+        element.roadAddress = element.address_name;
+      });
+      await this.$store.commit("SET_SHOP_LIST", data);
+      if (status === kakao.maps.services.Status.OK) {
+        // 정상적으로 검색이 완료됐으면 지도에 마커를 표출합니다
+        await this.displayPlaces(data);
+      } else if (status === kakao.maps.services.Status.ZERO_RESULT) {
+        // 검색결과가 없는경우 해야할 처리가 있다면 이곳에 작성해 주세요
+      } else if (status === kakao.maps.services.Status.ERROR) {
+        // 에러로 인해 검색결과가 나오지 않은 경우 해야할 처리가 있다면 이곳에 작성해 주세요
+      }
+    },
+    async displayPlaces(places) {
+      // 몇번째 카테고리가 선택되어 있는지 얻어옵니다
+      // 이 순서는 스프라이트 이미지에서의 위치를 계산하는데 사용됩니다
+      var order = document
+        .getElementById(this.currCategory)
+        .getAttribute("data-order");
+      console.log(places.length);
+      var self = this;
+      var listItem = document.querySelectorAll(".product-item");
+      for (var i = 0; i < places.length; i++) {
+        // 마커를 생성하고 지도에 표시합니다
+        var marker = this.addMarker_test(
+          new kakao.maps.LatLng(places[i].y, places[i].x),
+          order
+        );
+        var title = places[i].place_name;
+        var shopKind = places[i].category_group_name;
+        var roadAddress = places[i].address_name;
+        // 마커와 검색결과 항목을 클릭 했을 때
+        // 장소정보를 표출하도록 클릭 이벤트를 등록합니다
+        // (function (marker, place) {
+        //   kakao.maps.event.addListener(marker, "click", function () {
+        //     displayPlaceInfo(place);
+        //   });
+        // })(marker, places[i]);
+        console.log(listItem.length, "??????????");
+        (function (marker, title, shopKind, roadAddress, map) {
+          kakao.maps.event.addListener(marker, "click", async function () {
+            if (self.customOverlay != null) {
+              self.customOverlay.setMap(null);
+            }
+            await self.displayInfowindow(marker, title, shopKind, roadAddress);
+            document.querySelector("#close").onclick = function () {
+              self.customOverlay.setMap(null);
+            };
+          });
+
+          listItem[i].onmouseover = async function () {
+            if (self.customOverlay != null) {
+              self.customOverlay.setMap(null);
+            }
+            self.displayInfowindow(marker, title, shopKind, roadAddress);
+            await setTimeout(function () {}, 1000);
+            await self.caller();
+            document.querySelector("#close").onclick = function () {
+              self.customOverlay.setMap(null);
+            };
+          };
+        })(marker, title, shopKind, roadAddress, this.map);
+      }
+    },
+    caller() {
+      document.querySelector("#close").onclick = function () {
+        self.customOverlay.setMap(null);
+      };
+    },
+    addMarker_test(position, order) {
+      var imageSrc =
+          "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/places_category.png", // 마커 이미지 url, 스프라이트 이미지를 씁니다
+        imageSize = new kakao.maps.Size(27, 28), // 마커 이미지의 크기
+        imgOptions = {
+          spriteSize: new kakao.maps.Size(72, 208), // 스프라이트 이미지의 크기
+          spriteOrigin: new kakao.maps.Point(46, order * 36), // 스프라이트 이미지 중 사용할 영역의 좌상단 좌표
+          offset: new kakao.maps.Point(11, 28), // 마커 좌표에 일치시킬 이미지 내에서의 좌표
+        },
+        markerImage = new kakao.maps.MarkerImage(
+          imageSrc,
+          imageSize,
+          imgOptions
+        ),
+        marker = new kakao.maps.Marker({
+          position: position, // 마커의 위치
+          image: markerImage,
+        });
+
+      marker.setMap(this.map); // 지도 위에 마커를 표출합니다
+      this.markers.push(marker); // 배열에 생성된 마커를 추가합니다
+
+      return marker;
+    },
+    addCategoryClickEvent() {
+      // var category = document.getElementById("category"),
+      //   children = category.children;
+      // var self = this;
+      // for (var i = 0; i < children.length; i++) {
+      //   children[i].onclick = self.onClickCategory(children[i]);
+      // }
+    },
+
+    // 카테고리를 클릭했을 때 호출되는 함수입니다
+    onClickCategory(el) {
+      console.log("=================", el.target);
+      var self = this;
+      var id = el.target.id,
+        className = el.target.className;
+
+      self.placeOverlay.setMap(null);
+
+      if (className === "on") {
+        //console.log("on");
+        self.currCategory = "";
+        self.changeCategoryClass();
+        self.removeMarker();
+      } else {
+        self.currCategory = id;
+        //console.log("else");
+        self.changeCategoryClass(el.target);
+        self.searchPlaces();
+      }
+    },
+
+    // 클릭된 카테고리에만 클릭된 스타일을 적용하는 함수입니다
+    changeCategoryClass(el) {
+      //console.log("changeCategoryClass", el);
+      var category = document.getElementById("category"),
+        children = category.children,
+        i;
+      console.log(children.length);
+      for (i = 0; i < children.length; i++) {
+        children[i].className = "";
+      }
+
+      if (el) {
+        el.className = "on";
+      }
     },
     async displayMarkers(places) {
       console.log("displayMarkers", this.markers);
@@ -375,7 +572,6 @@ export default {
       for (var i = 0; i < places.length; i++) {
         var placePosition = new kakao.maps.LatLng(places[i].lat, places[i].lng);
         var marker = this.addMarker(placePosition, i);
-        var itemEl = this.getListItem(i, places[i]); // 검색 결과 항목 Element를 생성합니다
 
         //console.log(i);
         // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
@@ -383,8 +579,8 @@ export default {
         bounds.extend(placePosition);
 
         var title = places[i].shopName;
-        var code = places[i].shopKind;
-        var place = places[i];
+        var shopKind = places[i].shopKind;
+        var roadAddress = places[i].roadAddress;
         var map = this.map;
         // 마커와 검색결과 항목에 mouseover 했을때
         // 해당 장소에 인포윈도우에 장소명을 표시합니다
@@ -392,52 +588,27 @@ export default {
 
         //var ii = i;
 
-        (function (marker, title, code, place, map) {
+        (function (marker, title, shopKind, roadAddress, map) {
           kakao.maps.event.addListener(marker, "click", function () {
             if (self.customOverlay != null) {
               self.customOverlay.setMap(null);
             }
-            self.displayInfowindow(marker, title, place);
+            self.displayInfowindow(marker, title, shopKind, roadAddress);
+            document.querySelector("#close").onclick = function () {
+              self.customOverlay.setMap(null);
+            };
           });
 
-          itemEl.onmouseover = function () {
-            self.displayInfowindow(marker, title);
-          };
-
-          itemEl.onmouseout = function () {
-            if (self.customOverlay != null) {
-              self.customOverlay.setMap(null);
-            }
-          };
           listItem[i].onmouseover = function () {
             if (self.customOverlay != null) {
               self.customOverlay.setMap(null);
             }
-            self.displayInfowindow(marker, title, place);
+            self.displayInfowindow(marker, title, shopKind, roadAddress);
+            document.querySelector("#close").onclick = function () {
+              self.customOverlay.setMap(null);
+            };
           };
-        })(marker, places[i].shopName, places[i].shopKind, places[i], this.map);
-
-        //console.log(listItem[ii].dataset.param);
-
-        // kakao.maps.event.addListener(marker, "click", function () {
-        //   self.displayInfowindow(marker, title, place);
-        // });
-
-        // kakao.maps.event.addListener(map, "click", function () {
-        //   if (self.customOverlay != null) {
-        //     self.customOverlay.setMap(null);
-        //   }
-        // });
-
-        // itemEl.onmouseover = function () {
-        //   self.displayInfowindow(marker, title);
-        // };
-
-        // itemEl.onmouseout = function () {
-        //   self.customOverlay.setMap(null);
-        // };
-
-        fragment.appendChild(itemEl);
+        })(marker, title, shopKind, roadAddress, this.map);
       }
       // 마커를 생성하고 지도에 표시합니다
 
@@ -469,27 +640,14 @@ export default {
       return marker;
     },
     removeMarker() {
+      console.log("마커제거중 -- ", this.markers.length);
       for (var i = 0; i < this.markers.length; i++) {
         this.markers[i].setMap(null);
       }
       this.markers = [];
     },
 
-    getListItem(index, place) {
-      var el = document.createElement("li");
-      var itemStr = `
-		<span class="markerbg marker_${index + 1}></span>
-		<div class="info"><h5>${place.aptName}</h5> <button>관심등록</button>
-		<span>${place.sidoName} ${place.gugunName} ${place.dongName} ${
-        place.jibun
-      }</span>
-	`;
-      el.innerHTML = itemStr;
-      el.className = "item";
-
-      return el;
-    },
-    displayInfowindow(marker, title, place) {
+    displayInfowindow(marker, title, shopKind, roadAddress) {
       var content = `
       <!-- Profile Image -->
     <div class="card card-primary card-outline" style="width: 300px">
@@ -509,11 +667,11 @@ export default {
 
         <ul class="list-group list-group-unbordered mb-3" style="overflow:hidden">
           <li class="list-group-item">
-            <b>업종</b> <a class="float-right">${place.shopKind}</a>
+            <b>업종</b> <a class="float-right">${shopKind}</a>
           </li>
           <li class="list-group-item">
-            <b>주소</b> <a class="float-right">${place.roadAddress.substr(
-              place.roadAddress.indexOf(" ")
+            <b>주소</b> <a class="float-right">${roadAddress.substr(
+              roadAddress.indexOf(" ")
             )}</a>
           </li>
           <li class="list-group-item">
@@ -525,26 +683,24 @@ export default {
         <div class="close" title="닫기" id="close"></div>
       </div>
       <!-- /.card-body -->
-      
+
       `;
 
       var position = new kakao.maps.LatLng(
-        marker.getPosition().getLat() + 0.00033,
-        marker.getPosition().getLng() - 0.00003
+        marker.getPosition().getLat(),
+        marker.getPosition().getLng()
       );
       this.customOverlay = new kakao.maps.CustomOverlay({
         position: position,
         content: content,
-        xAnchor: 0.3,
-        yAnchor: 0.91,
+        xAnchor: 0.5,
+        yAnchor: 1,
         clickable: true, // 커스텀 오버레이 클릭 시 지도에 이벤트를 전파하지 않도록 설정한다
       });
-      console.log(this.customOverlay);
+
       var self = this;
+
       this.customOverlay.setMap(this.map);
-      document.querySelector("#close").onclick = function () {
-        self.customOverlay.setMap(null);
-      };
     },
     removeAllChildNods(el) {
       while (el.hasChildNodes()) {
@@ -669,5 +825,141 @@ div >>> .content-right {
 }
 #map >>> .float-right {
   float: right !important;
+}
+
+.content-right >>> .map_wrap {
+  position: relative;
+  width: 100%;
+  height: 350px;
+}
+.content-right >>> #category {
+  padding: 0;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  border-radius: 5px;
+  border: 1px solid #909090;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
+  background: #fff;
+  overflow: hidden;
+  z-index: 2;
+}
+.content-right >>> #category li {
+  float: left;
+  list-style: none;
+  width: 50px;
+  border-right: 1px solid #acacac;
+  padding: 6px 0;
+  text-align: center;
+  cursor: pointer;
+}
+.content-right >>> #category li.on {
+  background: #eee;
+}
+.content-right >>> #category li:hover {
+  background: #ffe6e6;
+  border-left: 1px solid #acacac;
+  margin-left: -1px;
+}
+.content-right >>> #category li:last-child {
+  margin-right: 0;
+  border-right: 0;
+}
+.content-right >>> #category li span {
+  display: block;
+  margin: 0 auto 3px;
+  width: 27px;
+  height: 28px;
+}
+.content-right >>> #category li .category_bg {
+  background: url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/places_category.png)
+    no-repeat;
+}
+.content-right >>> #category li .bank {
+  background-position: -10px 0;
+}
+.content-right >>> #category li .mart {
+  background-position: -10px -36px;
+}
+.content-right >>> #category li .pharmacy {
+  background-position: -10px -72px;
+}
+.content-right >>> #category li .oil {
+  background-position: -10px -108px;
+}
+.content-right >>> #category li .cafe {
+  background-position: -10px -144px;
+}
+.content-right >>> #category li .store {
+  background-position: -10px -180px;
+}
+.content-right >>> #category li.on .category_bg {
+  background-position-x: -46px;
+}
+.content-right >>> .placeinfo_wrap {
+  position: absolute;
+  bottom: 28px;
+  left: -150px;
+  width: 300px;
+}
+.content-right >>> .placeinfo {
+  position: relative;
+  width: 100%;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 10px;
+  background: #fff;
+}
+.content-right >>> .placeinfo:nth-of-type(n) {
+  border: 0;
+  box-shadow: 0px 1px 2px #888;
+}
+.content-right >>> .placeinfo_wrap .after {
+  content: "";
+  position: relative;
+  margin-left: -12px;
+  left: 50%;
+  width: 22px;
+  height: 12px;
+  background: url("https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png");
+}
+.content-right >>> .placeinfo a,
+.content-right >>> .placeinfo a:hover,
+.content-right >>> .placeinfo a:active {
+  color: #fff;
+  text-decoration: none;
+}
+.content-right >>> .placeinfo a,
+.content-right >>> .placeinfo span {
+  display: block;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.content-right >>> .placeinfo span {
+  margin: 5px 5px 0 5px;
+  cursor: default;
+  font-size: 13px;
+}
+.content-right >>> .placeinfo .title {
+  font-weight: bold;
+  font-size: 14px;
+  border-radius: 6px 6px 0 0;
+  margin: -1px -1px 0 -1px;
+  padding: 10px;
+  color: #fff;
+  background: #d95050;
+  background: #d95050
+    url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/arrow_white.png)
+    no-repeat right 14px center;
+}
+.content-right >>> .placeinfo .tel {
+  color: #0f7833;
+}
+.content-right >>> .placeinfo .jibun {
+  color: #999;
+  font-size: 11px;
+  margin-top: 0;
 }
 </style>

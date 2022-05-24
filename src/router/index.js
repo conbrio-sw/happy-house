@@ -64,6 +64,11 @@ const routes = [
     name: "Todo",
     component: () => import("@/views/TodoView.vue"),
   },
+  {
+    path: "/kakao",
+    name: "KaKao",
+    component: () => import("@/components/Map/KakaoMap.vue"),
+  },
 ];
 
 const router = new VueRouter({

@@ -1,100 +1,98 @@
 <template>
-  <div>
-    <div class="container-fluid box-all p-0">
-      <div class="search-all">
-        <div class="search-left">
-          <div class="mt-2 mb-2 text-center mx-auto">
-            <div style="display: inline-block; width: 110px; margin-right: 5px">
-              <b-form-select
-                class="form-select"
-                v-model="sidoCode"
-                :options="sidos"
-                @change="gugunList"
-              ></b-form-select>
-            </div>
-            <div style="display: inline-block; width: 110px; margin-right: 5px">
-              <b-form-select
-                class="form-select"
-                v-model="gugunCode"
-                :options="guguns"
-                @change="dongList"
-              ></b-form-select>
-            </div>
-            <div style="display: inline-block; width: 160px">
-              <b-form-select
-                class="form-select"
-                v-model="dongCode"
-                :options="dongs"
-                @change="[searchClear(), searchApt()]"
-              ></b-form-select>
-            </div>
+  <div class="container-fluid box-all p-0">
+    <div class="search-all">
+      <div class="search-left">
+        <div class="mt-2 mb-2 text-center mx-auto">
+          <div style="display: inline-block; width: 110px; margin-right: 5px">
+            <b-form-select
+              class="form-select"
+              v-model="sidoCode"
+              :options="sidos"
+              @change="gugunList"
+            ></b-form-select>
           </div>
-        </div>
-        <div class="search-right">
-          <div class="mt-2 mb-2 text-center">
-            <div style="display: inline-block; width: 120px" class="m-2">
-              <select
-                class="form-select"
-                aria-label="Default select example"
-                v-model="key"
-                @change="searchClear"
-              >
-                <option value="aptName">아파트 명</option>
-                <option value="buildyear">건축년도</option>
-                <option value="dealAmount">거래금액</option>
-                <option value="area">넓이</option>
-              </select>
-            </div>
-            <div
-              v-if="searchTypeIsText"
-              style="display: inline-block; width: 300px"
-              class="m-2"
-            >
-              <input
-                class="form-control"
-                type="text"
-                placeholder="Search"
-                v-model="word"
-              />
-            </div>
-            <div v-else style="display: inline-block; width: 300px" class="m-2">
-              <input
-                class="form-control"
-                type="number"
-                placeholder="최소"
-                v-model="minValue"
-                style="display: inline-block; width: 145px; margin-right: 10px"
-              />
-              <input
-                class="form-control"
-                type="number"
-                placeholder="최대"
-                v-model="maxValue"
-                style="display: inline-block; width: 145px"
-              />
-            </div>
-            <div style="display: inline-block" class="m-2">
-              <button
-                type="button"
-                class="btn btn-outline-primary"
-                @click="searchApt"
-                style="width: 100%"
-              >
-                검색
-              </button>
-            </div>
+          <div style="display: inline-block; width: 110px; margin-right: 5px">
+            <b-form-select
+              class="form-select"
+              v-model="gugunCode"
+              :options="guguns"
+              @change="dongList"
+            ></b-form-select>
+          </div>
+          <div style="display: inline-block; width: 160px">
+            <b-form-select
+              class="form-select"
+              v-model="dongCode"
+              :options="dongs"
+              @change="[searchClear(), searchApt()]"
+            ></b-form-select>
           </div>
         </div>
       </div>
-      <div class="content-all">
-        <div class="content-left">
-          <div style="height: 1000px; margin-bottom: 2%; overflow: auto">
-            <house-list />
+      <div class="search-right">
+        <div class="mt-2 mb-2 text-center">
+          <div style="display: inline-block; width: 120px" class="m-2">
+            <select
+              class="form-select"
+              aria-label="Default select example"
+              v-model="key"
+              @change="searchClear"
+            >
+              <option value="aptName">아파트 명</option>
+              <option value="buildyear">건축년도</option>
+              <option value="dealAmount">거래금액</option>
+              <option value="area">넓이</option>
+            </select>
+          </div>
+          <div
+            v-if="searchTypeIsText"
+            style="display: inline-block; width: 300px"
+            class="m-2"
+          >
+            <input
+              class="form-control"
+              type="text"
+              placeholder="Search"
+              v-model="word"
+            />
+          </div>
+          <div v-else style="display: inline-block; width: 300px" class="m-2">
+            <input
+              class="form-control"
+              type="number"
+              placeholder="최소"
+              v-model="minValue"
+              style="display: inline-block; width: 145px; margin-right: 10px"
+            />
+            <input
+              class="form-control"
+              type="number"
+              placeholder="최대"
+              v-model="maxValue"
+              style="display: inline-block; width: 145px"
+            />
+          </div>
+          <div style="display: inline-block" class="m-2">
+            <button
+              type="button"
+              class="btn btn-outline-primary"
+              @click="searchApt"
+              style="width: 100%"
+            >
+              검색
+            </button>
           </div>
         </div>
-        <div class="content-right">
-          <div id="map" style="width: 100%; height: 1000px"></div>
+      </div>
+    </div>
+    <div class="content-all">
+      <div class="content-left">
+        <div style="height: 1000px; margin-bottom: 2%; overflow: auto">
+          <house-list />
         </div>
+      </div>
+      <div class="content-right">
+        <div id="map" style="width: 100%; height: 1000px"></div>
       </div>
     </div>
   </div>
@@ -125,13 +123,6 @@ export default {
       word: "",
       minValue: "",
       maxValue: "",
-
-      //0524
-      lat_min: "",
-      lat_max: "",
-      lng_min: "",
-      lng_max: "",
-      bounds: null,
     };
   },
   mounted() {
@@ -178,6 +169,7 @@ export default {
   methods: {
     getUserInfo() {
       if (this.$store.getters.getUserDong) {
+        alert(this.$store.getters.getUserDong);
         console.log("유저정보가져오기 ---------");
         console.log("카카오정보", window.kakao);
         this.sidoCode = this.$store.getters.getUserSido;
@@ -188,13 +180,7 @@ export default {
         this.searchApt();
       }
     },
-    ...mapActions([
-      "getSido",
-      "getGugun",
-      "getDong",
-      "getHouseList",
-      "getHouseAll",
-    ]),
+    ...mapActions(["getSido", "getGugun", "getDong", "getHouseList"]),
     ...mapMutations(["CLEAR_SIDO_LIST", "CLEAR_GUGUN_LIST", "CLEAR_DONG_LIST"]),
     // sidoList() {
     //   this.getSido();
@@ -232,7 +218,6 @@ export default {
       if (this.dongCode) {
         await this.getHouseList(params);
         this.displayMarkers(this.$store.getters.getAptList);
-        this.map.setBounds(this.bounds);
       }
     },
     async initMap() {
@@ -250,7 +235,7 @@ export default {
 
       // 장소 검색 객체를 생성합니다
       this.ps = new kakao.maps.services.Places();
-      kakao.maps.event.addListener(this.map, "idle", this.searchPlaces);
+
       // 검색 결과 목록이나 마커를 클릭했을 때 장소명을 표출할 인포윈도우를 생성합니다
       this.infowindow = new kakao.maps.InfoWindow({ zIndex: 1 });
       // 커스텀 오버레이를 생성합니다
@@ -259,31 +244,9 @@ export default {
       this.geocoder = new kakao.maps.services.Geocoder();
       this.getUserInfo();
     },
-    async searchPlaces() {
-      this.lat_min = this.map.getBounds().qa;
-      this.lat_max = this.map.getBounds().pa;
-      this.lng_max = this.map.getBounds().oa;
-      this.lng_min = this.map.getBounds().ha;
-      console.log("lat 최소 최대 = ", this.lat_min, this.lat_max);
-      console.log("lng 최소 최대 = ", this.lng_min, this.lng_max);
-      const params = {
-        lat_min: this.lat_min,
-        lat_max: this.lat_max,
-        lng_max: this.lng_max,
-        lng_min: this.lng_min,
-        dong: this.dongCode,
-        key: this.key,
-        word: this.word,
-        minValue: this.minValue,
-        maxValue: this.maxValue,
-      };
-      this.removeMarker();
-      await this.getHouseAll(params);
-      this.displayMarkers(this.$store.getters.getAptList);
-    },
     async displayMarkers(places) {
       var fragment = document.createDocumentFragment();
-      this.bounds = new kakao.maps.LatLngBounds();
+      var bounds = new kakao.maps.LatLngBounds();
       var listStr = "";
       //console.log(places.length);
       // 지도에 표시되고 있는 마커를 제거합니다
@@ -297,7 +260,7 @@ export default {
         //console.log(i);
         // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
         // LatLngBounds 객체에 좌표를 추가합니다
-        this.bounds.extend(placePosition);
+        bounds.extend(placePosition);
         // 마커와 검색결과 항목에 mouseover 했을때
         // 해당 장소에 인포윈도우에 장소명을 표시합니다
         // mouseout 했을 때는 인포윈도우를 닫습니다
@@ -337,6 +300,7 @@ export default {
       // 마커를 생성하고 지도에 표시합니다
 
       // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
+      this.map.setBounds(bounds);
     },
     addMarker(position, idx, title) {
       var imageSrc =
@@ -364,7 +328,6 @@ export default {
       return marker;
     },
     removeMarker() {
-      console.log("마커지우는중");
       for (var i = 0; i < this.markers.length; i++) {
         this.markers[i].setMap(null);
       }
@@ -450,14 +413,14 @@ export default {
         "    </div>" +
         "</div>";
       var position = new kakao.maps.LatLng(
-        marker.getPosition().getLat(),
-        marker.getPosition().getLng()
+        marker.getPosition().getLat() + 0.00033,
+        marker.getPosition().getLng() - 0.00003
       );
       this.customOverlay = new kakao.maps.CustomOverlay({
         position: position,
         content: content,
-        xAnchor: 0.5,
-        yAnchor: 1,
+        xAnchor: 0.3,
+        yAnchor: 0.91,
         clickable: true, // 커스텀 오버레이 클릭 시 지도에 이벤트를 전파하지 않도록 설정한다
       });
       this.customOverlay.setMap(this.map);
@@ -556,9 +519,5 @@ div >>> .content-right {
 }
 #map >>> .float-right {
   float: right !important;
-}
-
-div >>> box-profile {
-  white-space: nowrap;
 }
 </style>

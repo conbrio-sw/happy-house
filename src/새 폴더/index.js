@@ -402,18 +402,6 @@ export default new Vuex.Store({
           console.log(error);
         });
     },
-    async getHouseAll({ commit }, params) {
-      await http
-        .get(`/map/aptAll`, { params })
-        .then(({ data }) => {
-          // console.log(commit, data);
-          commit("SET_HOUSE_LIST", data);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
-    ,
     async getHouseList({ commit }, params) {
       // vue cli enviroment variables 검색
       //.env.local file 생성.
