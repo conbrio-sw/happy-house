@@ -7,7 +7,10 @@ import Login from "@/views/LoginView.vue";
 import Register from "@/views/RegisterView.vue";
 import MyPage from "@/views/MyPageView.vue";
 
+import UserUpdate from "@/views/UserUpdateView.vue";
 
+// news
+import News from "@/components/News.vue";
 import test from "@/views/test.vue";
 Vue.use(VueRouter);
 
@@ -60,9 +63,14 @@ const routes = [
     component: () => import("@/views/HouseView.vue"),
   },
   {
-    path: "/todo",
-    name: "Todo",
-    component: () => import("@/views/TodoView.vue"),
+    path: "/userUpdate",
+    name: "UserUpdate",
+    component: UserUpdate,
+  },
+  {
+    path: "/news",
+    name: "News",
+    component: News,
   },
   {
     path: "/kakao",

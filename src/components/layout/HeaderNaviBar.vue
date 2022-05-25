@@ -10,35 +10,30 @@
       data-wow-delay="0.1s"
     >
       <div class="row gx-0 align-items-center d-none d-lg-flex">
-        <div class="col-lg-6 px-5 text-start">
-          <ol class="breadcrumb mb-0">
-            <li class="breadcrumb-item">
-              <a class="small text-light" href="#">Home</a>
-            </li>
-            <li class="breadcrumb-item">
-              <a class="small text-light" href="#">Career</a>
-            </li>
-            <li class="breadcrumb-item">
-              <a class="small text-light" href="#">Terms</a>
-            </li>
-            <li class="breadcrumb-item">
-              <a class="small text-light" href="#">Privacy</a>
-            </li>
-          </ol>
+        <div class="col-lg-6 px-4 text-start">
+          <img src="img/logo/logo_transparent.jpg" height="44px" alt="" />
         </div>
         <div class="col-lg-6 px-5 text-end">
           <small>Follow us:</small>
           <div class="h-100 d-inline-flex align-items-center">
-            <a class="btn-lg-square text-primary border-end rounded-0" href=""
+            <a
+              class="btn-lg-square text-primary border-end rounded-0"
+              href="https://www.facebook.com/"
               ><i class="fab fa-facebook-f"></i
             ></a>
-            <a class="btn-lg-square text-primary border-end rounded-0" href=""
+            <a
+              class="btn-lg-square text-primary border-end rounded-0"
+              href="https://twitter.com/?lang=ko"
               ><i class="fab fa-twitter"></i
             ></a>
-            <a class="btn-lg-square text-primary border-end rounded-0" href=""
-              ><i class="fab fa-linkedin-in"></i
+            <a
+              class="btn-lg-square text-primary border-end rounded-0"
+              href="https://github.com/"
+              ><i class="fab fa-github"></i
             ></a>
-            <a class="btn-lg-square text-primary pe-0" href=""
+            <a
+              class="btn-lg-square text-primary pe-0"
+              href="https://www.instagram.com/"
               ><i class="fab fa-instagram"></i
             ></a>
           </div>
@@ -83,20 +78,34 @@
             :class="{ active: isNotice }"
             >Notice</a
           >
-          <div class="nav-item dropdown">
-            <a
-              href="#"
-              class="nav-link dropdown-toggle"
-              data-bs-toggle="dropdown"
-              >Pages</a
-            >
-            <div class="dropdown-menu m-0">
-              <a href="team.html" class="dropdown-item">Our Team</a>
-              <a href="testimonial.html" class="dropdown-item">Testimonial</a>
-              <a href="404.html" class="dropdown-item">404 Page</a>
-            </div>
-          </div>
-          <a href="contact.html" class="nav-item nav-link">Contact</a>
+          <a
+            v-if="!this.$store.state.login.isLogin"
+            href="/login"
+            class="nav-item nav-link"
+            :class="{ active: isLogin }"
+            >Login</a
+          >
+          <a
+            v-if="!this.$store.state.login.isLogin"
+            href="/register"
+            class="nav-item nav-link"
+            :class="{ active: isRegister }"
+            >SignUp</a
+          >
+          <a
+            v-if="this.$store.state.login.isLogin"
+            href="/myPage"
+            class="nav-item nav-link"
+            :class="{ active: isMyPage }"
+            >MyPage</a
+          >
+          <span
+            style="cursor: pointer"
+            v-if="this.$store.state.login.isLogin"
+            @click="logout"
+            class="nav-item nav-link"
+            >Logout</span
+          >
         </div>
         <div class="d-none d-lg-flex">
           <div
@@ -106,7 +115,7 @@
           </div>
           <div class="ps-3">
             <small class="text-primary mb-0">Call Us</small>
-            <p class="text-light fs-5 mb-0">+012 345 6789</p>
+            <p class="text-light fs-5 mb-0">02-3429-5100</p>
           </div>
         </div>
       </div>
@@ -120,14 +129,23 @@ export default {
   name: "HeaderNaviBar",
   methods: {
     logout() {
-      this.$store.commit("SET_LOGOUT");
+      this.$store.dispatch("logout");
+      this.$router.push("/login");
     },
   },
   mounted() {
     console.log(this.isPage);
   },
   computed: {
-    ...mapState(["isHome", "isHouse", "isShop", "isNotice"]),
+    ...mapState([
+      "isHome",
+      "isHouse",
+      "isShop",
+      "isNotice",
+      "isLogin",
+      "isMyPage",
+      "isRegister",
+    ]),
   },
 };
 </script>

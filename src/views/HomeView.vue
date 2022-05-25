@@ -1,58 +1,255 @@
 <template>
-  <!-- Carousel Start -->
-  <div class="container-fluid p-0 pb-5 wow fadeIn" data-wow-delay="0.1s">
-    <div class="owl-carousel header-carousel position-relative">
-      <div class="owl-carousel-item position-relative">
-        <img class="img-fluid" src="img/carousel-1.jpg" alt="" />
-        <div class="owl-carousel-inner">
-          <div class="container">
-            <div class="row justify-content-start">
-              <div class="col-lg-8">
-                <p class="text-primary text-uppercase fw-bold mb-2">
-                  // The Best Bakery
-                </p>
-                <h1 class="display-1 text-light mb-4 animated slideInDown">
-                  We Bake With Passion
-                </h1>
-                <p class="text-light fs-5 mb-4 pb-3">
-                  Vero elitr justo clita lorem. Ipsum dolor sed stet sit diam
-                  rebum ipsum.
-                </p>
-                <a href="" class="btn btn-primary rounded-pill py-3 px-5"
-                  >Read More</a
-                >
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="owl-carousel-item position-relative">
-        <img class="img-fluid" src="img/carousel-2.jpg" alt="" />
-        <div class="owl-carousel-inner">
-          <div class="container">
-            <div class="row justify-content-start">
-              <div class="col-lg-8">
-                <p class="text-primary text-uppercase fw-bold mb-2">
-                  // The Best Bakery
-                </p>
-                <h1 class="display-1 text-light mb-4 animated slideInDown">
-                  We Bake With Passion
-                </h1>
-                <p class="text-light fs-5 mb-4 pb-3">
-                  Vero elitr justo clita lorem. Ipsum dolor sed stet sit diam
-                  rebum ipsum.
-                </p>
-                <a href="" class="btn btn-primary rounded-pill py-3 px-5"
-                  >Read More</a
-                >
-              </div>
-            </div>
-          </div>
-        </div>
+  <div>
+    <div
+      id="banner"
+      class="container-fluid page-header py-6 wow fadeIn"
+      data-wow-delay="0.1s"
+    >
+      <div class="container text-center pt-5 pb-3">
+        <h1 class="display-4 text-white animated slideInDown mb-3">
+          HAPPY HOUSE
+        </h1>
+        <nav aria-label="breadcrumb animated slideInDown"></nav>
       </div>
     </div>
+    <div class="row container-fluid pb-5">
+      <!-- 뉴스 부분  -->
+      <div class="container-xxl py-6 pb-0 col-6 mt-0">
+        <div class="container" style="width: 50%">
+          <div
+            class="text-center mx-auto mb-5 wow fadeInUp"
+            data-wow-delay="0.1s"
+            style="max-width: 600px"
+          >
+            <!-- <p class="text-primary text-uppercase mb-2">오늘의 뉴스를 확인해보세요.</p> -->
+            <h1 class="display-6 mb-4">Today's News</h1>
+          </div>
+          <!-- 뉴스 -->
+          <div
+            id="carouselExampleDark"
+            class="carousel carousel-dark slide"
+            data-bs-ride="carousel"
+          >
+            <div class="carousel-inner">
+              <div
+                v-for="(item, index) in listGetters"
+                :key="index"
+                class="carousel-item"
+                data-bs-interval="10000"
+                :class="{ active: index == 0 }"
+              >
+                <img
+                  src="img/home/bg-test01.png"
+                  width="30%"
+                  height="450px"
+                  class="d-block w-100"
+                  alt="..."
+                />
+                <div
+                  class="d-none d-md-block carousel-caption"
+                  @click="openLink(item.originallink)"
+                >
+                  <h2
+                    class="mb-5"
+                    style="
+                      font-family: 맑은 고딕;
+                      overflow: hidden;
+                      text-overflow: ellipsis;
+                      white-space: nowrap;
+                      width: 100%;
+                      color: #eaa636;
+                    "
+                    v-html="item.title"
+                  ></h2>
+                  <h4
+                    class="mb-0"
+                    v-html="item.description"
+                    style="
+                      font-size: 20px;
+                      font-family: 맑은 고딕;
+                      line-height: 1.88;
+                    "
+                  ></h4>
+                </div>
+              </div>
+            </div>
+
+            <button
+              class="carousel-control-prev"
+              type="button"
+              data-bs-target="#carouselExampleDark"
+              data-bs-slide="prev"
+            >
+              <span
+                class="carousel-control-prev-icon"
+                aria-hidden="true"
+              ></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button
+              class="carousel-control-next"
+              type="button"
+              data-bs-target="#carouselExampleDark"
+              data-bs-slide="next"
+            >
+              <span
+                class="carousel-control-next-icon"
+                aria-hidden="true"
+              ></span>
+              <span class="visually-hidden">Next</span>
+            </button>
+          </div>
+          <!-- <div
+            class="owl-carousel testimonial-carousel wow fadeInUp"
+            data-wow-delay="0.1s"
+          >
+            <div
+              v-for="(item, index) in listGetters"
+              :key="index"
+              class="testimonial-item bg-white rounded p-4"
+              style="border: 1px solid orange; height: 300px; width: 200px"
+            >
+              <div
+                class="d-flex align-items-center mb-4"
+                @click="openLink(item.originallink)"
+              >
+
+                <div class="ms-0">
+                  <h5 class="mb-0" v-html="item.title"></h5>
+                </div>
+              </div>
+              <p class="mb-0" v-html="item.description" style="font-size: 15px">
+                더보기...
+              </p>
+            </div>
+          </div> -->
+        </div>
+      </div>
+      <!-- Testimonial End -->
+      <!-- Facts Start -->
+      <div class="container-xxl py-6 pb-0 col-6">
+        <div class="container">
+          <div class="row g-4 py-6">
+            <div class="col-lg-6 col-md-6 wow fadeIn" data-wow-delay="0.1s">
+              <div class="fact-item bg-light rounded text-center h-100 p-5">
+                <!-- <img :src="`${weatherIcon}`" class="f mb-4" width="30%" /> -->
+                <i
+                  :class="weatherIcon"
+                  class="fa-4x mb-4"
+                  style="color: orange"
+                />
+                <!-- <p class="mb-2">{{ weather.weather[0].main }}</p>
+                <h1 class="display-5 mb-0" data-toggle="counter-up">{{ weather.main.temp }}</h1> -->
+              </div>
+            </div>
+            <div class="col-lg-6 col-md-6 wow fadeIn" data-wow-delay="0.3s">
+              <div class="fact-item bg-light rounded text-center h-100 p-5">
+                <i class="fa fa-users fa-4x text-primary mb-4"></i>
+                <p class="mb-2">Skilled Professionals</p>
+                <h1 class="display-5 mb-0" data-toggle="counter-up">175</h1>
+              </div>
+            </div>
+            <!-- <div class="col-lg-6 col-md-6 wow fadeIn" data-wow-delay="0.5s">
+              <div class="fact-item bg-light rounded text-center h-100 p-5">
+                <i class="fa fa-bread-slice fa-4x text-primary mb-4"></i>
+                <p class="mb-2">Total Products</p>
+                <h1 class="display-5 mb-0" data-toggle="counter-up">135</h1>
+              </div>
+            </div>
+            <div class="col-lg-6 col-md-6 wow fadeIn" data-wow-delay="0.7s">
+              <div class="fact-item bg-light rounded text-center h-100 p-5">
+                <i class="fa fa-cart-plus fa-4x text-primary mb-4"></i>
+                <p class="mb-2">Order Everyday</p>
+                <h1 class="display-5 mb-0" data-toggle="counter-up">9357</h1>
+              </div>
+            </div> -->
+          </div>
+        </div>
+      </div>
+      <!-- Facts End -->
+    </div>
+
+    <footer id="footer" class="pt-5">
+      <hr />
+      <div class="container">
+        <div class="row">
+          <div class="footer">
+            <ul>
+              <li><a href="#">사이트 도움말</a></li>
+              <li><a href="#">사이트 이용약관</a></li>
+              <li><a href="#">사이트 운영원칙</a></li>
+              <li>
+                <a href="#"><strong>개인정보취급방침</strong></a>
+              </li>
+              <li><a href="#">책임의 한계와 법적고지</a></li>
+              <li><a href="#">게시중단요청서비스</a></li>
+              <li><a href="#">고객센터</a></li>
+            </ul>
+            <address>
+              Copyright ©
+              <a href="#"><strong>happyhouse</strong></a>
+              All Rights Reserved.
+            </address>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <!-- <div
+      id="footer"
+      style="
+        position: absolute;
+        bottom: 0;
+
+        height: 100px;
+      "
+    >
+      <div class="row" style="overflow: hidden">
+        <div class="col-sm-2 text-center">
+          <img
+            src="img/logo/footer.png"
+            class="img-fluid"
+            height="100px"
+            alt=""
+          />
+        </div>
+        <div
+          class="col-sm-8 row"
+          style="
+            line-height: 36px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            min-width: 680px;
+          "
+        >
+          <div class="col-sm-6 text-start" style="min-width: 310px">
+            Copyright © www.happyhouse.com All rights reserved.
+          </div>
+          <div class="col-sm-6 text-end" style="min-width: 310px">
+            오늘 방문자 수 : 1,557명
+          </div>
+          <hr class="p-0 m-0" />
+          <div class="col-sm-6 text-start" style="min-width: 310px">
+            해피하우스 운영팀: help@happyhouse.com
+          </div>
+          <div
+            class="col-sm-6 text-end"
+            style="overflow: hidden; min-width: 310px"
+          >
+            이용약관 | 문의/신고 | 개인정보처리방침
+          </div>
+        </div>
+        <div class="col-sm-2 text-center">
+          <img
+            src="img/logo/footer.png"
+            class="img-fluid"
+            height="100px"
+            alt=""
+          />
+        </div>
+      </div>
+    </div> -->
   </div>
-  <!-- Carousel End -->
 </template>
 
 <script>
@@ -61,19 +258,118 @@ export default {
   props: {
     msg: String,
   },
+  data() {
+    return {
+      weather: "",
+      weatherIcon: "",
+    };
+  },
   created() {
+    // this.$store.commit("SET_NOW_HOME");
+    // await this.$store.dispatch("getNews");
+    // console.log(this.$store.state.main.news);
+    // console.log("created : " + process.env.VUE_APP_OPENWEATHER_API_KEY);
+    console.log("created env: ", process.env);
+    this.getWeather();
+    //this.getNews();
+  },
+  async mounted() {
     this.$store.commit("SET_NOW_HOME");
+    await this.$store.dispatch("getNews");
+    console.log(this.$store.state.main.news);
+
+    console.log("mounted : " + process.env.VUE_APP_OPENWEATHER_API_KEY);
+    console.log("mounted env: ", process.env);
+  },
+  computed: {
+    listGetters() {
+      return this.$store.state.main.news; // no getBoardList()
+    },
+  },
+  methods: {
+    openLink(link) {
+      console.log(link);
+      window.open(link, "_blank");
+    },
+    async getWeather() {
+      const API_KEY = process.env.VUE_APP_OPENWEATHER_API_KEY;
+      console.log("API KEY : " + API_KEY);
+      var lon = "129.0756416";
+      var lat = "35.1795543";
+      var $this = this;
+      fetch(
+        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`
+      )
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (json) {
+          console.log(json);
+          $this.weather = json;
+
+          var icons = {
+            i01: "fas fa-sun",
+            i02: "fas fa-cloud-sun",
+            i03: "fas fa-cloud",
+            i04: "fas fa-cloud-meatball",
+            i09: "fas fa-cloud-sun-rain",
+            i10: "fas fa-cloud-showers-heavy",
+            i11: "fas fa-poo-storm",
+            i13: "far fa-snowflake",
+            i50: "fas fa-smog",
+          };
+          var i = "i" + json.weather[0].icon.substr(0, 2);
+          $this.weatherIcon = icons[i];
+          console.log($this.weatherIcon);
+          //console.log("웨덜  " + $this.weather.weather[0].icon);
+          const temparature = json.main.temp; //온도
+          const place = json.name; // 사용자 위치
+          //weather.innerText = `${temparature} @${place}`;
+        });
+    },
   },
 };
 </script>
 
 <style scoped>
-.underline-steelblue {
-  display: inline-block;
-  background: linear-gradient(
-    180deg,
-    rgba(255, 255, 255, 0) 70%,
-    rgba(72, 190, 233, 0.3) 30%
-  );
+.page-header {
+  margin-bottom: 2rem;
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url(/public/img/house-1.jpeg) center center no-repeat;
+  background-size: cover;
 }
+.carousel-caption {
+  top: 1.25rem;
+}
+.footer {
+  text-align: center;
+  padding: 30px 50px;
+}
+.footer li {
+  position: relative;
+  display: inline;
+  padding: 0 7px 0 10px;
+  white-space: nowrap;
+}
+.footer li:before {
+  content: "";
+  width: 1px;
+  height: 12px;
+  background-color: #dbdbdb;
+  position: absolute;
+  left: 0;
+  top: 2px;
+}
+.footer li:first-child:before {
+  width: 0;
+}
+.footer address {
+  padding-top: 15px;
+}
+/* #footer {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
+    url("../../public/img/logo/footer.png");
+
+  background-size: contain;
+} */
 </style>

@@ -17,7 +17,7 @@
       <div class="search-all">
         <div class="search-left">
           <div class="mt-2 mb-2 text-center mx-auto">
-            <div style="display: inline-block; width: 100px; margin-right: 5px">
+            <div style="display: inline-block; width: 110px; margin-right: 5px">
               <b-form-select
                 class="form-select"
                 v-model="sidoCode"
@@ -106,6 +106,7 @@
                 :key="index"
                 :shop="shop"
                 :index="index"
+                :currCategory="currCategory"
               />
             </b-container>
             <b-container v-else class="bv-example-row mt-3">
@@ -128,28 +129,70 @@
             ></div>
             <ul id="category">
               <li id="BK9" data-order="0" @click.self="onClickCategory">
-                <span class="category_bg bank"></span>
-                은행
+                <button class="category-btn" @click="test">
+                  <img
+                    src="https://map.pstatic.net/res/category/image/00023-00006.png"
+                    alt=""
+                    width="20"
+                    height="20"
+                  />
+                  은행
+                </button>
               </li>
               <li id="MT1" data-order="1" @click.self="onClickCategory">
-                <span class="category_bg mart"></span>
-                마트
+                <button class="category-btn" @click="test">
+                  <img
+                    src="https://map.pstatic.net/res/category/image/00023-00105.png"
+                    alt=""
+                    width="20"
+                    height="20"
+                  />
+                  마트
+                </button>
               </li>
               <li id="PM9" data-order="2" @click.self="onClickCategory">
-                <span class="category_bg pharmacy"></span>
-                약국
+                <button class="category-btn" @click="test">
+                  <img
+                    src="https://map.pstatic.net/res/category/image/00023-00087.png"
+                    alt=""
+                    width="20"
+                    height="20"
+                  />
+                  약국
+                </button>
               </li>
               <li id="OL7" data-order="3" @click.self="onClickCategory">
-                <span class="category_bg oil"></span>
-                주유소
+                <button class="category-btn" @click="test">
+                  <img
+                    src="https://map.pstatic.net/res/category/image/00023-00078.png"
+                    alt=""
+                    width="20"
+                    height="20"
+                  />
+                  주유소
+                </button>
               </li>
               <li id="CE7" data-order="4" @click.self="onClickCategory">
-                <span class="category_bg cafe"></span>
-                카페
+                <button class="category-btn" @click="test">
+                  <img
+                    src="https://map.pstatic.net/res/category/image/00023-00012.png"
+                    alt=""
+                    width="20"
+                    height="20"
+                  />
+                  카페
+                </button>
               </li>
               <li id="CS2" data-order="5" @click.self="onClickCategory">
-                <span class="category_bg store"></span>
-                편의점
+                <button class="category-btn" @click="test">
+                  <img
+                    src="https://map.pstatic.net/res/category/image/00023-00099.png"
+                    alt=""
+                    width="20"
+                    height="20"
+                  />
+                  편의점
+                </button>
               </li>
             </ul>
           </div>
@@ -227,8 +270,42 @@ export default {
       "CLEAR_DONG_LIST",
       "CLEAR_SHOP_LIST",
     ]),
-    test(event, index) {
-      alert(index);
+    getUserInfo() {
+      if (
+        this.$store.state.myPage.dongCode != null &&
+        this.$store.state.myPage.dongCode != ""
+      ) {
+        console.log("유저정보가져오기 ---------");
+        console.log("카카오정보", window.kakao);
+        this.sidoCode = this.$store.state.myPage.sidoCode;
+        this.getGugun(this.sidoCode);
+        this.gugunCode = this.$store.state.myPage.gugunCode;
+        this.getDong(this.gugunCode);
+        this.dongCode = this.$store.state.myPage.dongCode;
+        this.shopList();
+      }
+    },
+    test(event) {
+      this.CLEAR_SHOP_LIST();
+      console.log(event.target.parentElement);
+      var el = event.target.parentElement;
+      var self = this;
+      var id = el.id,
+        className = el.className;
+
+      self.placeOverlay.setMap(null);
+
+      if (className === "on") {
+        //console.log("on");
+        self.currCategory = "";
+        self.changeCategoryClass();
+        self.removeMarker();
+      } else {
+        self.currCategory = id;
+        //console.log("else");
+        self.changeCategoryClass(el);
+        self.searchPlaces();
+      }
     },
     searchClear() {
       this.currCategory = null;
@@ -386,6 +463,7 @@ export default {
       this.customOverlay;
       //주소-좌표 변환 객체를 생성합니다
       this.geocoder = new kakao.maps.services.Geocoder();
+      this.getUserInfo();
     },
     addEventHandle(target, type, callback) {
       if (target.addEventListener) {
@@ -487,23 +565,48 @@ export default {
       };
     },
     addMarker_test(position, order) {
-      var imageSrc =
-          "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/places_category.png", // 마커 이미지 url, 스프라이트 이미지를 씁니다
-        imageSize = new kakao.maps.Size(27, 28), // 마커 이미지의 크기
-        imgOptions = {
-          spriteSize: new kakao.maps.Size(72, 208), // 스프라이트 이미지의 크기
-          spriteOrigin: new kakao.maps.Point(46, order * 36), // 스프라이트 이미지 중 사용할 영역의 좌상단 좌표
-          offset: new kakao.maps.Point(11, 28), // 마커 좌표에 일치시킬 이미지 내에서의 좌표
-        },
-        markerImage = new kakao.maps.MarkerImage(
-          imageSrc,
-          imageSize,
-          imgOptions
-        ),
-        marker = new kakao.maps.Marker({
-          position: position, // 마커의 위치
-          image: markerImage,
-        });
+      //alert(typeof order);
+      console.log(order);
+      var src;
+      switch (order) {
+        case "0":
+          src = "https://map.pstatic.net/res/category/image/00023-00004.png";
+          break;
+        case "1":
+          src = "https://map.pstatic.net/res/category/image/00023-00103.png";
+          break;
+        case "2":
+          src = "https://map.pstatic.net/res/category/image/00023-00085.png";
+          break;
+        case "3":
+          src = "https://map.pstatic.net/res/category/image/00023-00076.png";
+          break;
+        case "4":
+          src = "https://map.pstatic.net/res/category/image/00023-00010.png";
+          break;
+        case "5":
+          src = "https://map.pstatic.net/res/category/image/00023-00097.png";
+          break;
+        default:
+          alert("어떤 값인지 파악이 되지 않습니다.");
+      }
+      if (order)
+        var imageSrc = src, // 마커 이미지 url, 스프라이트 이미지를 씁니다
+          imageSize = new kakao.maps.Size(27, 28), // 마커 이미지의 크기
+          imgOptions = {
+            //spriteSize: new kakao.maps.Size(72, 208), // 스프라이트 이미지의 크기
+            //spriteOrigin: new kakao.maps.Point(46, order * 36), // 스프라이트 이미지 중 사용할 영역의 좌상단 좌표
+            offset: new kakao.maps.Point(11, 28), // 마커 좌표에 일치시킬 이미지 내에서의 좌표
+          },
+          markerImage = new kakao.maps.MarkerImage(
+            imageSrc,
+            imageSize,
+            imgOptions
+          ),
+          marker = new kakao.maps.Marker({
+            position: position, // 마커의 위치
+            image: markerImage,
+          });
 
       marker.setMap(this.map); // 지도 위에 마커를 표출합니다
       this.markers.push(marker); // 배열에 생성된 마커를 추가합니다
@@ -521,17 +624,17 @@ export default {
 
     // 카테고리를 클릭했을 때 호출되는 함수입니다
     onClickCategory(el) {
-      console.log("=================", el.target);
+      console.log("xxxxxxxxxxxxxxxxx", el.target);
       var self = this;
       var id = el.target.id,
         className = el.target.className;
 
       self.placeOverlay.setMap(null);
-
+      self.CLEAR_SHOP_LIST();
       if (className === "on") {
-        //console.log("on");
         self.currCategory = "";
         self.changeCategoryClass();
+
         self.removeMarker();
       } else {
         self.currCategory = id;
@@ -833,25 +936,51 @@ div >>> .content-right {
   height: 350px;
 }
 .content-right >>> #category {
-  padding: 0;
+  /* padding: 0; */
   position: absolute;
   top: 10px;
   left: 10px;
   border-radius: 5px;
-  border: 1px solid #909090;
-  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
+  /* border: 1px solid #909090; */
+  /* box-shadow: 0 1px 1px rgba(0, 0, 0, 0.4); */
+  display: inline-block;
+  padding: 0 11px;
+  white-space: nowrap;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 4px 0 rgb(0 0 0 / 12%);
   background: #fff;
+
   overflow: hidden;
   z-index: 2;
 }
+
 .content-right >>> #category li {
   float: left;
   list-style: none;
-  width: 50px;
+
+  display: inline-block;
+  vertical-align: top;
+  margin: 0;
+  padding: 0;
+
+  /* width: 50px;
   border-right: 1px solid #acacac;
   padding: 6px 0;
-  text-align: center;
+  text-align: center; */
   cursor: pointer;
+}
+.content-right >>> #category button {
+  position: relative;
+  padding: 19px 11px 17px;
+  line-height: 19px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #242424;
+  border-radius: 0;
+  appearance: none;
+  background-color: transparent;
+  margin: 0;
+  border: 0;
 }
 .content-right >>> #category li.on {
   background: #eee;

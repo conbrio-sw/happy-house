@@ -14,6 +14,9 @@ export default new Vuex.Store({
     isHouse: false,
     isShop: false,
     isNotice: false,
+    isLogin: false,
+    isMyPage: false,
+    isRegister: false,
 
     // 0520 수정
     map: null,
@@ -24,10 +27,7 @@ export default new Vuex.Store({
     dongs: [{ value: null, text: "동" }],
     houses: [],
     house: null,
-    todos: [
-      // { title: '할 일1', completed: false },
-      // { title: '할 일2', completed: false },
-    ],
+
 
     shop: {
       list: [],
@@ -36,10 +36,8 @@ export default new Vuex.Store({
     login: {
       // NavBar
       isLogin: false,
-
       userName: "",
       userProfileImageUrl: "",
-
       // Login
       userEmail: "admin@naver.com",
       userPassword: "admin",
@@ -78,17 +76,14 @@ export default new Vuex.Store({
       userEmail: "",
       isAdmin: "",
       interestArea: "", // 한글 출력
-      sido: "11",
-      gugun: "11110",
-      dong:"",
-    },
-    // USER TEST
-    user: {
-      sido: "11",
-      gugun: "11110",
-      dong:"??",
+      sidoCode: "",
+      gugunCode: "",
+      dongCode: "",
     },
 
+    main: {
+      news: [],
+    },
   },
   getters: {
     getUserSido(state) {
@@ -103,9 +98,7 @@ export default new Vuex.Store({
       console.log(state.myPage.dong);
       return state.myPage.dong;
     },
-    allTodosCount(state) {
-      return state.todos.length;
-    },
+
     completedTodosCount(state) {
       return state.todos.filter((todo) => {
         return todo.completed === true;
@@ -189,13 +182,16 @@ export default new Vuex.Store({
     },
   },
   mutations: {
-    // 0520수정 현재 페이지
+
     SET_NOW_HOME(state) {
       //console.log("현재 홈 화면 입니다");
       state.isHome = true;
       state.isHouse = false;
       state.isShop = false;
       state.isNotice = false;
+      state.isLogin = false;
+      state.isMyPage = false;
+      state.isRegister = false;
     },
     SET_NOW_HOUSE(state) {
       //console.log("현재 하우스 화면 입니다");
@@ -203,6 +199,9 @@ export default new Vuex.Store({
       state.isHouse = true;
       state.isShop = false;
       state.isNotice = false;
+      state.isLogin = false;
+      state.isMyPage = false;
+      state.isRegister = false;
     },
     SET_NOW_SHOP(state) {
       //console.log("현재 샵 화면 입니다");
@@ -210,6 +209,9 @@ export default new Vuex.Store({
       state.isHouse = false;
       state.isShop = true;
       state.isNotice = false;
+      state.isLogin = false;
+      state.isMyPage = false;
+      state.isRegister = false;
     },
     SET_NOW_NOTICE(state) {
       //console.log("현재 공지 화면 입니다");
@@ -217,9 +219,46 @@ export default new Vuex.Store({
       state.isHouse = false;
       state.isShop = false;
       state.isNotice = true;
+      state.isLogin = false;
+      state.isMyPage = false;
+      state.isRegister = false;
     },
 
-    /////////////////////////////// House start /////////////////////////////////////
+    // login, mypage, sugnup 추가
+    SET_NOW_LOGIN(state) {
+      //console.log("현재 공지 화면 입니다");
+      state.isHome = false;
+      state.isHouse = false;
+      state.isShop = false;
+      state.isNotice = false;
+      state.isLogin = true;
+      state.isMyPage = false;
+      state.isRegister = false;
+    },
+    SET_NOW_MYPAGE(state) {
+      //console.log("현재 공지 화면 입니다");
+      state.isHome = false;
+      state.isHouse = false;
+      state.isShop = false;
+      state.isNotice = false;
+      state.isLogin = false;
+      state.isMyPage = true;
+      state.isRegister = false;
+    },
+    SET_NOW_REGISTER(state) {
+      //console.log("현재 공지 화면 입니다");
+      state.isHome = false;
+      state.isHouse = false;
+      state.isShop = false;
+      state.isNotice = false;
+      state.isLogin = false;
+      state.isMyPage = false;
+      state.isRegister = true;
+    },
+    SET_SHOP_LIST(state, list) {
+      state.shop.list = list;
+    },
+     /////////////////////////////// House start /////////////////////////////////////
     SET_SIDO_LIST(state, sidos) {
       sidos.forEach((sido) => {
         state.sidos.push({ value: sido.sidoCode, text: sido.sidoName });
@@ -262,29 +301,6 @@ export default new Vuex.Store({
     },
     /////////////////////////////// House end /////////////////////////////////////
 
-    //////////////////////////// Todo List start //////////////////////////////////
-    CREATE_TODO(state, todoItem) {
-      state.todos.push(todoItem);
-    },
-    DELETE_TODO(state, todoItem) {
-      const index = state.todos.indexOf(todoItem);
-      state.todos.splice(index, 1);
-    },
-    UPDATE_TODO_STATUS(state, todoItem) {
-      state.todos = state.todos.map((todo) => {
-        if (todo === todoItem) {
-          return {
-            ...todo,
-            completed: !todoItem.completed,
-          };
-        }
-        return todo;
-      });
-    },
-    SET_SHOP_LIST(state, list) {
-      state.shop.list = list;
-    },
-    //////////////////////////// Todo List end //////////////////////////////////
 
     //찬비님//
     SET_LOGIN(state, payload) {
@@ -344,6 +360,15 @@ export default new Vuex.Store({
       state.myPage.userEmail = payload.userEmail;
       state.myPage.isAdmin = payload.isAdmin;
       state.myPage.interestArea = payload.interestArea;
+      state.myPage.sidoCode = payload.sidoCode;
+      state.myPage.gugunCode = payload.gugunCode;
+      state.myPage.dongCode = payload.dongCode;
+      state.login.userName = payload.userName;
+      state.login.userPassword = payload.userPassword;
+      state.login.userEmail = payload.userEmail;
+    },
+    SET_NEWS_LIST(state, list) {
+      state.main.news = list;
     },
   },
   actions: {
@@ -442,23 +467,6 @@ export default new Vuex.Store({
     },
     /////////////////////////////// House end /////////////////////////////////////
 
-    //////////////////////////// Todo List start //////////////////////////////////
-
-    // destructuring 활용
-    createTodo({ commit }, todoItem) {
-      commit("CREATE_TODO", todoItem);
-    },
-    deleteTodo({ commit }, todoItem) {
-      commit("DELETE_TODO", todoItem);
-    },
-    updateTodoStatus({ commit }, todoItem) {
-      commit("UPDATE_TODO_STATUS", todoItem);
-    },
-    //////////////////////////// Todo List end //////////////////////////////////
-
-
-
-
     /// 찬비님
     async boardList(context) {
       let params = {
@@ -498,13 +506,16 @@ export default new Vuex.Store({
             userEmail: data.userEmail,
             isAdmin: data.isAdmin == 1 ? "Admin" : "Guest",
             interestArea: interestArea,
+            sidoCode: data.dongCode == null ? null : data.dongCode.substr(0, 2),
+            gugunCode: data.dongCode == null ? null : data.dongCode.substr(0, 5),
+            dongCode: data.dongCode == null ? null : data.dongCode,
           };
 
           context.commit("SET_MYDATA", params);
           //getDongName(data.dongCode);
 
-          sessionStorage.setItem("userName", data.userName);
-          sessionStorage.setItem("userEmail", data.userEmail);
+          //sessionStorage.setItem("userName", data.userName);
+          //sessionStorage.setItem("userEmail", data.userEmail);
         }
       } catch (error) {
         console.error(error);
@@ -519,6 +530,56 @@ export default new Vuex.Store({
         return str;
       } catch (error) {
         console.error(error);
+      }
+    },
+    async deleteUser(context) {
+      let params = {
+        userName: this.state.login.userName,
+        userEmail: this.state.login.userEmail,
+      };
+      try {
+        let { data } = await http.delete("/user", { params });
+        sessionStorage.clear();
+        context.commit("SET_LOGOUT");
+        console.log(data.result);
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    logout(context) {
+      try {
+        http.get("/logout"); // params: params shorthand property, let response 도 제거
+        sessionStorage.clear();
+        context.commit("SET_LOGOUT");
+      } catch (error) {
+        console.error(error);
+      }
+    },
+    async getNews(context) {
+      console.log("news 가져오기");
+      try {
+        let data = await http.get("/api/server/news");
+        var item = data.data.data; //JSON.parse(data.data.data); //JSON.stringify(data.data.items[0]);
+        var items = JSON.parse(item);
+        //this.news = items.items;
+        console.log(items.items);
+        var tmp = [];
+        // console.log(this.news);
+        //.substr(0, 50)
+        for (var i = 0; i < 10; i++) {
+          tmp.push({
+            title: items.items[i].title,
+            description:
+              items.items[i].description + "<b style='font-size:10px'>더보기</b>",
+            originallink: items.items[i].originallink,
+          });
+          //console.log("original " + tmp[i].originallink);
+        }
+        //console.log(tmp.title);
+
+        await context.commit("SET_NEWS_LIST", tmp);
+      } catch (error) {
+        console.log(error);
       }
     },
   },

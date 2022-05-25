@@ -1,27 +1,70 @@
 <template>
-  <div class="container">
-    <h2 class="mb-3 mt-3">Login</h2>
-    <div class="mb-3">
-      <input
-        type="email"
-        class="form-control"
-        v-model="$store.state.login.userEmail"
-        placeholder="Email"
-      />
+  <div>
+    <div
+      id="banner"
+      class="container-fluid page-header py-6 wow fadeIn"
+      data-wow-delay="0.1s"
+    >
+      <div class="container text-center pt-5 pb-3">
+        <h1 class="display-4 text-white animated slideInDown mb-3">Login</h1>
+        <nav aria-label="breadcrumb animated slideInDown"></nav>
+      </div>
     </div>
-    <div class="mb-3">
-      <input
-        type="password"
-        class="form-control"
-        v-model="$store.state.login.userPassword"
-        placeholder="Password"
-      />
-    </div>
-    <div>
-      <button @click="login" class="btn btn-primary">로그인</button>
-      <router-link to="/register" class="btn btn-success float-end"
-        >회원가입</router-link
-      >
+    <div class="container-xxl py-6">
+      <div class="container">
+        <div
+          class="text-center mx-auto mb-5 wow fadeInUp"
+          data-wow-delay="0.1s"
+          style="max-width: 500px"
+        >
+          <!-- <h1 class="display-6 mb-4">LOGIN</h1> -->
+        </div>
+        <div class="row g-0 justify-content-center">
+          <div class="col-lg-8 wow fadeInUp" data-wow-delay="0.1s">
+            <form>
+              <div class="row g-3">
+                <div class="col-12">
+                  <div class="form-floating">
+                    <input
+                      type="email"
+                      class="form-control"
+                      v-model="$store.state.login.userEmail"
+                      placeholder="Email"
+                    />
+                    <label>Email</label>
+                  </div>
+                </div>
+                <div class="col-12">
+                  <div class="form-floating">
+                    <input
+                      type="password"
+                      class="form-control"
+                      v-model="$store.state.login.userPassword"
+                      placeholder="Password"
+                    />
+                    <label>Password</label>
+                  </div>
+                </div>
+                <div class="col-12 text-center">
+                  <button
+                    class="btn btn-primary rounded-pill py-3 px-5"
+                    type="button"
+                    @click="login"
+                  >
+                    Login
+                  </button>
+                  &nbsp;&nbsp;&nbsp;
+                  <router-link
+                    to="/register"
+                    class="btn btn-secondary rounded-pill py-3 px-5"
+                    >Sing Up</router-link
+                  >
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -54,6 +97,7 @@ export default {
           userName: data.userName,
           userProfileImageUrl: data.userProfileImageUrl,
         });
+        this.$store.dispatch("myData");
         // board 로 이동
         this.$router.push("/");
       } catch (error) {
@@ -67,5 +111,19 @@ export default {
       }
     },
   },
+  created() {
+    this.$store.commit("SET_NOW_LOGIN");
+  },
 };
 </script>
+<style scoped>
+.page-header {
+  margin-bottom: 6rem;
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url(/public/img/house-1.jpeg) center center no-repeat;
+  background-size: cover;
+}
+#banner {
+  margin-bottom: 0;
+}
+</style>

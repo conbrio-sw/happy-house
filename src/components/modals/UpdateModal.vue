@@ -1,6 +1,6 @@
 <template>
   <div class="modal" tabindex="-1" id="updateModal">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">글 수정</h5>
@@ -226,7 +226,7 @@ export default {
 
 <style scoped>
 .modal >>> .ck-editor__editable {
-  min-height: 300px !important;
+  min-height: 400px !important;
 }
 
 .modal >>> .thumbnail-wrapper {

@@ -159,7 +159,7 @@
               <li id="BK9" data-order="0" @click.self="onClickCategory">
                 <button class="category-btn" @click="test">
                   <img
-                    src="https://map.pstatic.net/res/category/image/00023-00115.png"
+                    src="https://map.pstatic.net/res/category/image/00023-00006.png"
                     alt=""
                     width="20"
                     height="20"
@@ -168,24 +168,59 @@
                 </button>
               </li>
               <li id="MT1" data-order="1" @click.self="onClickCategory">
-                <span class="category_bg mart"></span>
-                마트
+                <button class="category-btn" @click="test">
+                  <img
+                    src="https://map.pstatic.net/res/category/image/00023-00105.png"
+                    alt=""
+                    width="20"
+                    height="20"
+                  />
+                  마트
+                </button>
               </li>
               <li id="PM9" data-order="2" @click.self="onClickCategory">
-                <span class="category_bg pharmacy"></span>
-                약국
+                <button class="category-btn" @click="test">
+                  <img
+                    src="https://map.pstatic.net/res/category/image/00023-00087.png"
+                    alt=""
+                    width="20"
+                    height="20"
+                  />
+                  약국
+                </button>
               </li>
               <li id="OL7" data-order="3" @click.self="onClickCategory">
-                <span class="category_bg oil"></span>
-                주유소
+                <button class="category-btn" @click="test">
+                  <img
+                    src="https://map.pstatic.net/res/category/image/00023-00078.png"
+                    alt=""
+                    width="20"
+                    height="20"
+                  />
+                  주유소
+                </button>
               </li>
               <li id="CE7" data-order="4" @click.self="onClickCategory">
-                <span class="category_bg cafe"></span>
-                카페
+                <button class="category-btn" @click="test">
+                  <img
+                    src="https://map.pstatic.net/res/category/image/00023-00012.png"
+                    alt=""
+                    width="20"
+                    height="20"
+                  />
+                  카페
+                </button>
               </li>
               <li id="CS2" data-order="5" @click.self="onClickCategory">
-                <span class="category_bg store"></span>
-                편의점
+                <button class="category-btn" @click="test">
+                  <img
+                    src="https://map.pstatic.net/res/category/image/00023-00099.png"
+                    alt=""
+                    width="20"
+                    height="20"
+                  />
+                  편의점
+                </button>
               </li>
             </ul>
           </div>

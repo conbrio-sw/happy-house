@@ -177,14 +177,17 @@ export default {
   },
   methods: {
     getUserInfo() {
-      if (this.$store.getters.getUserDong) {
+      if (
+        this.$store.state.myPage.dongCode != null &&
+        this.$store.state.myPage.dongCode != ""
+      ) {
         console.log("유저정보가져오기 ---------");
         console.log("카카오정보", window.kakao);
-        this.sidoCode = this.$store.getters.getUserSido;
+        this.sidoCode = this.$store.state.myPage.sidoCode;
         this.getGugun(this.sidoCode);
-        this.gugunCode = this.$store.getters.getUserGugun;
+        this.gugunCode = this.$store.state.myPage.gugunCode;
         this.getDong(this.gugunCode);
-        this.dongCode = this.$store.getters.getUserDong;
+        this.dongCode = this.$store.state.myPage.dongCode;
         this.searchApt();
       }
     },
@@ -394,7 +397,7 @@ export default {
         <div class="text-center" style="height: 200px">
           <img
             class="profile-user-img img-fluid img-circle"
-            src="/img/shop/info.jpg"
+            src="/img/house/info.jfif"
             alt="User profile picture"
             style="height: 190px"
           />

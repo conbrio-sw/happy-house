@@ -30,4 +30,14 @@ a:hover {
 a.router-link-exact-active {
   color: #3aa4ca;
 } */
+.content-all h3 {
+  font-family: 맑은 고딕;
+  color: #eaa636;
+  font-weight: 600;
+}
+.content-right h3 {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
 </style>

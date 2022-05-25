@@ -1,9 +1,13 @@
 <template>
   <div class="modal" tabindex="-1" id="detailModal">
-    <div class="modal-dialog">
+    <div
+      class="modal-dialog modal-dialog-scrollable modal-xl modal-dialog-centered"
+    >
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">글 상세</h5>
+          <h5 class="modal-title" style="color: #eaa636 !important">
+            공지사항
+          </h5>
           <button
             type="button"
             class="btn-close"
@@ -12,41 +16,76 @@
           ></button>
         </div>
         <div class="modal-body">
-          <table class="table table-hover">
-            <tbody>
-              <tr>
-                <td>글번호</td>
-                <td>{{ $store.state.board.boardId }}</td>
-              </tr>
-              <tr>
-                <td>제목</td>
-                <td>{{ $store.state.board.title }}</td>
-              </tr>
-              <tr>
-                <td>내용</td>
-                <td v-html="$store.state.board.content"></td>
-              </tr>
-              <tr>
-                <td>작성자</td>
-                <td>{{ $store.state.board.userName }}</td>
-              </tr>
-              <!-- 아래 코드는 오류 발생 초기 생성 시점에 regDt = {} -->
-              <!-- <tr><td>작성일시</td><td>{{ makeDateStr(regDt.date.year, regDt.date.month, regDt.date.day, '.') }}</td></tr> -->
-              <tr>
-                <td>작성일시</td>
-                <td>{{ $store.state.board.regDate }} {{ $store.state.board.regTime }}</td>
-              </tr>
-              <tr>
-                <td>조회수</td>
-                <td>{{ $store.state.board.readCount }}</td>
-              </tr>
-              <!-- New for FileUpload -->
-              <tr>
-                <td colspan="2">첨부파일</td>
-              </tr>
-              <tr v-if="$store.state.board.fileList.length > 0">
-                <td colspan="2">
-                  <div v-for="(file, index) in $store.state.board.fileList" :key="index">
+          <div
+            class="card card-primary card-outline"
+            style="vertical-align: baseline"
+          >
+            <div
+              class="card-header row p-0 m-0"
+              style="height: 50px; line-height: 60px"
+            >
+              <div class="col-sm-1" style="text-align: center">
+                {{ $store.state.board.boardId }}.
+              </div>
+              <h3 class="card-title m-0 p-0 col-sm-9" style="line-height: 50px">
+                {{ $store.state.board.title }}
+              </h3>
+              <div class="col-sm-2">
+                <div style="text-align: right" class="px-2">
+                  {{ $store.state.board.regDate }}
+                  {{ $store.state.board.regTime }}
+                </div>
+              </div>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body p-0">
+              <div class="mailbox-read-info m-2 row" style="line-height: 32px">
+                <h5 class="col-sm-6 m-0 p-0">
+                  <div class="mx-2">
+                    {{ $store.state.board.userName }}
+                  </div>
+                </h5>
+                <h6 class="col-sm-6 m-0 p-0" style="text-align: right">
+                  조회수
+                  <span class="mailbox-read-time float-right mx-2">{{
+                    $store.state.board.readCount
+                  }}</span>
+                </h6>
+              </div>
+              <hr class="m-0" />
+              <!-- /.mailbox-read-info -->
+
+              <div class="mailbox-read-message" style="min-height: 400px">
+                <div class="m-4">
+                  <p v-html="$store.state.board.content"></p>
+                  <div v-if="$store.state.board.fileList.length > 0">
+                    <div
+                      v-for="(file, index) in $store.state.board.fileList"
+                      :key="index"
+                    >
+                      <img
+                        :src="folder + file.fileUrl"
+                        class="img-fluid"
+                        alt=""
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- /.mailbox-read-message -->
+            </div>
+            <!-- /.card-body -->
+
+            <div class="card-footer row px-0 m-0">
+              <div class="col-sm-1 fileName" style="line-height: 38px">
+                <strong>첨부파일</strong>
+              </div>
+              <div class="col-sm-11">
+                <div v-if="$store.state.board.fileList.length > 0">
+                  <div
+                    v-for="(file, index) in $store.state.board.fileList"
+                    :key="index"
+                  >
                     <span class="fileName">{{ file.fileName }}</span>
 
                     <a
@@ -57,30 +96,31 @@
                       >내려받기</a
                     >
                   </div>
-                </td>
-              </tr>
-              <!-- / New for FileUpload -->
-            </tbody>
-          </table>
+                </div>
+              </div>
+            </div>
+            <!-- /.card-footer -->
+          </div>
+          <!-- /.card -->
         </div>
         <div class="modal-footer">
           <button
             v-show="$store.state.board.sameUser"
             @click="changeToUpdate"
-            class="btn btn-sm btn-primary btn-outline"
+            class="btn btn-sm btn-secondary btn-outline"
             data-dismiss="modal"
             type="button"
           >
-            글 수정하기
+            수정하기
           </button>
           <button
             v-show="$store.state.board.sameUser"
             @click="changeToDelete"
-            class="btn btn-sm btn-warning btn-outline"
+            class="btn btn-sm btn-danger btn-outline"
             data-dismiss="modal"
             type="button"
           >
-            글 삭제하기
+            삭제하기
           </button>
         </div>
       </div>
@@ -90,6 +130,11 @@
 
 <script>
 export default {
+  data() {
+    return {
+      folder: "http://localhost/",
+    };
+  },
   methods: {
     changeToUpdate() {
       this.$emit("call-parent-change-to-update");
@@ -101,4 +146,15 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+#contents {
+  height: 400px;
+}
+.modal * {
+  font-family: 맑은 고딕;
+}
+#card-header >>> .small-content {
+  line-height: 1.2;
+  vertical-align: baseline;
+}
+</style>

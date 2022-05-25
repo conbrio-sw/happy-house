@@ -1,75 +1,84 @@
 <template>
-  <div class="container">
-    <h4 class="text-center">게시판 - Main</h4>
-
-    <div class="input-group mb-3">
-      <!-- store 사용 -->
-      <!-- <input v-model="searchWord" @keydown.enter="boardList" type="text" class="form-control"> -->
-      <input
-        v-model="$store.state.board.searchWord"
-        @keydown.enter="boardList"
-        type="text"
-        class="form-control"
-      />
-      <button @click="boardList" class="btn btn-success" type="button">
-        Search
-      </button>
+  <div>
+    <div
+      class="container-fluid page-header py-6 wow fadeIn"
+      data-wow-delay="0.1s"
+    >
+      <div class="container text-center pt-5 pb-3">
+        <h1 class="display-4 text-white animated slideInDown mb-3">Notice</h1>
+      </div>
     </div>
-
-    <table class="table table-hover">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>제목</th>
-          <th>작성자</th>
-          <th>작성일시</th>
-          <th>조회수</th>
-        </tr>
-      </thead>
-      <tbody>
+    <div class="container">
+      <div class="input-group mb-3">
         <!-- store 사용 -->
+        <!-- <input v-model="searchWord" @keydown.enter="boardList" type="text" class="form-control"> -->
+        <button class="btn btn-sm btn-secondary col-1" @click="showInsertModal">
+          글쓰기
+        </button>
+        <input
+          v-model="$store.state.board.searchWord"
+          @keydown.enter="boardList"
+          type="text"
+          class="form-control"
+          placeholder="검색어를 입력해주세요."
+        />
+        <button @click="boardList" class="btn btn-primary" type="button">
+          <img src="img/magnifying-glass (1).png" width="20" />
+        </button>
+        <!-- <button class="btn btn-sm btn-secondary col-1" @click="showInsertModal">글쓰기</button> -->
+      </div>
 
-        <!-- 직접 store 에 접근해도 된다. -->
-        <!-- <tr v-for="(board, index) in $store.state.board.list" @click="boardDetail(board.boardId)" v-bind:key="index"> -->
+      <table class="table table-hover table">
+        <thead class="table-secondary">
+          <tr>
+            <th class="col-sm-2" scope="col">글번호</th>
+            <th class="col-sm-5" scope="col">제목</th>
+            <th class="col-sm-2" scope="col">작성자</th>
+            <th class="col-sm-2" scope="col">작성일시</th>
+            <th class="col-sm-1" scope="col">조회수</th>
+          </tr>
+        </thead>
+        <tbody class="table-group-divider">
+          <!-- store 사용 -->
 
-        <!-- getters 를 이용하는 코드 -->
-        <!-- computed - listGetters - getBoardList  -->
-        <tr
-          style="cursor: pointer"
-          v-for="(board, index) in listGetters"
-          @click="boardDetail(board.boardId)"
-          v-bind:key="index"
-        >
-          <td>{{ board.boardId }}</td>
-          <td>{{ board.title }}</td>
-          <td>{{ board.userName }}</td>
-          <td>{{ board.regDt.date | makeDateStr(".") }}</td>
-          <td>{{ board.readCount }}</td>
-        </tr>
-      </tbody>
-    </table>
+          <!-- 직접 store 에 접근해도 된다. -->
+          <!-- <tr v-for="(board, index) in $store.state.board.list" @click="boardDetail(board.boardId)" v-bind:key="index"> -->
 
-    <!-- props 사용 X -->
-    <!-- <pagination 
+          <!-- getters 를 이용하는 코드 -->
+          <!-- computed - listGetters - getBoardList  -->
+          <tr
+            style="cursor: pointer"
+            v-for="(board, index) in listGetters"
+            @click="boardDetail(board.boardId)"
+            v-bind:key="index"
+          >
+            <td scope="row">{{ board.boardId }}</td>
+            <td>{{ board.title }}</td>
+            <td>{{ board.userName }}</td>
+            <td>{{ board.regDt.date | makeDateStr(".") }}</td>
+            <td>{{ board.readCount }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- props 사용 X -->
+      <!-- <pagination 
       v-bind:listRowCount="listRowCount"
       v-bind:pageLinkCount="pageLinkCount"
       v-bind:currentPageIndex="currentPageIndex"
       v-bind:totalListItemCount="totalListItemCount"
       v-on:call-parent="movePage"
     ></pagination> -->
-    <pagination v-on:call-parent="movePage"></pagination>
+      <pagination v-on:call-parent="movePage"></pagination>
 
-    <button class="btn btn-sm btn-primary" @click="showInsertModal">
-      글쓰기
-    </button>
-
-    <insert-modal v-on:call-parent-insert="closeAfterInsert"></insert-modal>
-    <!-- props 제거 -->
-    <detail-modal
-      v-on:call-parent-change-to-update="changeToUpdate"
-      v-on:call-parent-change-to-delete="changeToDelete"
-    ></detail-modal>
-    <update-modal v-on:call-parent-update="closeAfterUpdate"></update-modal>
+      <insert-modal v-on:call-parent-insert="closeAfterInsert"></insert-modal>
+      <!-- props 제거 -->
+      <detail-modal
+        v-on:call-parent-change-to-update="changeToUpdate"
+        v-on:call-parent-change-to-delete="changeToDelete"
+      ></detail-modal>
+      <update-modal v-on:call-parent-update="closeAfterUpdate"></update-modal>
+    </div>
   </div>
 </template>
 
@@ -132,6 +141,13 @@ export default {
 
     // insert
     showInsertModal() {
+      if (this.$store.state.myPage.isAdmin != "Admin") {
+        this.$alertify.alertWithTitle(
+          "등록 불가",
+          "관리자만 공지 등록이 가능합니다."
+        );
+        return;
+      }
       this.insertModal.show();
     },
 
@@ -246,4 +262,17 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.page-header {
+  margin-bottom: 6rem;
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url(/public/img/notice/header.jpg) center center no-repeat;
+  background-size: cover;
+}
+/* #detailModal >>> .modal-lg {
+  width: 800px;
+}
+#detailModal >>> .modal-xl {
+  width: 1140px;
+} */
+</style>

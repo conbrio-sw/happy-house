@@ -32,6 +32,17 @@
             <span>{{ shop.roadAddress }}</span>
           </div>
         </div>
+        <div class="position-relative mt-auto">
+          <!-- class="img-fluid" -->
+          <img :src="getCategory" alt="" height="190px" width="365px" />
+          <div class="product-overlay">
+            <a
+              class="btn btn-lg-square btn-outline-light rounded-circle"
+              href=""
+              ><i class="fa fa-eye text-primary"></i
+            ></a>
+          </div>
+        </div>
       </div>
     </b-row>
     <hr />
@@ -49,6 +60,28 @@ export default {
   props: {
     shop: Object,
     index: Number,
+    currCategory: String,
+  },
+  computed: {
+    getCategory() {
+      if (this.currCategory == "" || this.currCategory == null) {
+        return "img/shop/list.jpg";
+      } else if (this.currCategory == "BK9") {
+        return "img/shop/list-bk.jpg";
+      } else if (this.currCategory == "MT1") {
+        return "img/shop/list-mt.jpg";
+      } else if (this.currCategory == "PM9") {
+        return "img/shop/list-pm.jpg";
+      } else if (this.currCategory == "OL7") {
+        return "img/shop/list-ol.jpg";
+      } else if (this.currCategory == "CE7") {
+        return "img/shop/list-ce.jpg";
+      } else if (this.currCategory == "CS2") {
+        return "img/shop/list-cs.jpg";
+      } else {
+        return "img/shop/list.jpg";
+      }
+    },
   },
   methods: {
     colorChange(flag) {
@@ -56,6 +89,7 @@ export default {
     },
     colorClickChange() {
       console.log("샵리스트", this.index);
+      console.log(this.currCategory);
       this.isColor = !this.isColor;
     },
   },

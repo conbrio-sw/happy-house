@@ -36,7 +36,7 @@ export default {
 <style scoped>
 .page-header {
   background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-    url(/public/img/house.jpeg) center center no-repeat;
+    url(/public/img/house/header.jpg) center center no-repeat;
   background-size: cover;
   margin-bottom: 1rem;
 }

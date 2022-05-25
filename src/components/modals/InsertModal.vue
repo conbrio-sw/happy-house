@@ -1,9 +1,9 @@
 <template>
   <div class="modal" tabindex="-1" id="insertModal">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">글 쓰기</h5>
+          <h5 class="modal-title">공지 등록</h5>
           <button
             type="button"
             class="btn-close"
@@ -173,7 +173,7 @@ export default {
 
 <style scoped>
 .modal >>> .ck-editor__editable {
-  min-height: 300px !important;
+  min-height: 400px !important;
 }
 
 .modal >>> .thumbnail-wrapper {
