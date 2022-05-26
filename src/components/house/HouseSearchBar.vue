@@ -388,7 +388,7 @@ export default {
 
       return el;
     },
-
+    //"/img/house/info.jfif"
     displayInfowindow(marker, title, place) {
       var content = `
       <!-- Profile Image -->
@@ -397,9 +397,9 @@ export default {
         <div class="text-center" style="height: 200px">
           <img
             class="profile-user-img img-fluid img-circle"
-            src="/img/house/info.jfif"
+            src=${place.img}
             alt="User profile picture"
-            style="height: 190px"
+            style="height: 190px; width: 266px"
           />
         </div>
 
@@ -425,33 +425,7 @@ export default {
       <!-- /.card-body -->
 
       `;
-      var content2 =
-        '<div class="wrap">' +
-        '    <div class="info">' +
-        '        <div class="title">' +
-        title +
-        '            <div class="close" title="닫기" id="close"></div>' +
-        "        </div>" +
-        '        <div class="body">' +
-        '            <div class="img">' +
-        '                <img src="/img/house/info.jfif" width="73" height="70">' +
-        "           </div>" +
-        '            <div class="desc">' +
-        '                <div class="ellipsis">' +
-        place.area +
-        "m<sup>2</sup>, " +
-        place.floor +
-        "층, " +
-        place.buildYear +
-        "년 건축" +
-        "</div>" +
-        '                <div><a href="#" target="_blank" class="link">' +
-        place.recentPrice +
-        "만원</a></div>" +
-        "            </div>" +
-        "        </div>" +
-        "    </div>" +
-        "</div>";
+
       var position = new kakao.maps.LatLng(
         marker.getPosition().getLat(),
         marker.getPosition().getLng()

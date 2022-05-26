@@ -129,40 +129,103 @@
       <!-- Facts Start -->
       <div class="container-xxl py-6 pb-0 col-6">
         <div class="container">
-          <div class="row g-4 py-6">
-            <div class="col-lg-6 col-md-6 wow fadeIn" data-wow-delay="0.1s">
-              <div class="fact-item bg-light rounded text-center h-100 p-5">
-                <!-- <img :src="`${weatherIcon}`" class="f mb-4" width="30%" /> -->
-                <i
-                  :class="weatherIcon"
-                  class="fa-4x mb-4"
-                  style="color: orange"
-                />
-                <!-- <p class="mb-2">{{ weather.weather[0].main }}</p>
-                <h1 class="display-5 mb-0" data-toggle="counter-up">{{ weather.main.temp }}</h1> -->
+          <div
+            class="text-center mx-auto mb-5 wow fadeInUp"
+            data-wow-delay="0.1s"
+            style="max-width: 500px"
+          >
+            <h1 class="display-6 mb-4">Today's Weather</h1>
+            <div class="row g-4 py-6">
+              <div class="col-lg-6 col-md-6 wow fadeIn" data-wow-delay="0.1s">
+                <div class="fact-item bg-light rounded text-center h-100 p-5">
+                  <!-- <img :src="`${weatherIcon}`" class="f mb-4" width="30%" /> -->
+                  <div v-if="this.$store.state.main.weatherIcon != ''">
+                    <p>현재 위치</p>
+                    <i
+                      :class="this.$store.state.main.weatherIcon"
+                      class="fa-4x mb-4"
+                      style="color: orange"
+                    />
+                    <p class="mb-2">
+                      {{ this.$store.state.main.weather.name }}
+                    </p>
+                    <h1 class="display-5 mb-0">
+                      {{
+                        Math.round(this.$store.state.main.weather.main.temp)
+                      }}°C
+                    </h1>
+                    <p class="mb-2 fw-bold">
+                      {{
+                        Math.round(this.$store.state.main.weather.main.temp_min)
+                      }}
+                      /
+                      {{
+                        Math.round(this.$store.state.main.weather.main.temp_max)
+                      }}
+                    </p>
+                  </div>
+                  <div v-else>
+                    <p>현재 위치</p>
+                    <img src="img/question.png" class="mb-4" />
+                    <p>위치를 허용하고 날씨를 확인해보새요!</p>
+                    <a href="/" class="display-6 mb-0">REFRESH</a>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-6 col-md-6 wow fadeIn" data-wow-delay="0.1s">
+                <div class="fact-item bg-light rounded text-center h-100 p-5">
+                  <div
+                    v-if="
+                      this.$store.state.login.isLogin &&
+                      this.$store.state.myPage.dongCode != null
+                    "
+                  >
+                    <!-- <img :src="`${weatherIcon}`" class="f mb-4" width="30%" /> -->
+                    <p>관심 지역</p>
+                    <i
+                      :class="this.$store.state.main.likeWeatherIcon"
+                      class="fa-4x mb-4"
+                      style="color: orange"
+                    />
+                    <p class="mb-2">
+                      {{ this.$store.state.main.likeWeather.name }}
+                    </p>
+                    <h1 class="display-5 mb-0">
+                      {{
+                        Math.round(
+                          this.$store.state.main.likeWeather.main.temp
+                        )
+                      }}°C
+                    </h1>
+                    <p class="mb-2 fw-bold">
+                      {{
+                        Math.round(
+                          this.$store.state.main.likeWeather.main.temp_min
+                        )
+                      }}
+                      /
+                      {{
+                        Math.round(
+                          this.$store.state.main.likeWeather.main.temp_max
+                        )
+                      }}
+                    </p>
+                  </div>
+                  <div v-else-if="this.$store.state.login.isLogin">
+                    <p>관심 지역</p>
+                    <img src="img/question.png" class="mb-4" />
+                    <p>관심지역을 설정하고 날씨를 확인해보새요!</p>
+                    <a href="/myPage" class="display-5 mb-0">CLICK</a>
+                  </div>
+                  <div v-else href="/login">
+                    <p>관심 지역</p>
+                    <img src="img/question.png" class="mb-4" />
+                    <p>로그인하고 날씨를 확인해보새요!</p>
+                    <a href="/login" class="display-5 mb-0">LOGIN</a>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="col-lg-6 col-md-6 wow fadeIn" data-wow-delay="0.3s">
-              <div class="fact-item bg-light rounded text-center h-100 p-5">
-                <i class="fa fa-users fa-4x text-primary mb-4"></i>
-                <p class="mb-2">Skilled Professionals</p>
-                <h1 class="display-5 mb-0" data-toggle="counter-up">175</h1>
-              </div>
-            </div>
-            <!-- <div class="col-lg-6 col-md-6 wow fadeIn" data-wow-delay="0.5s">
-              <div class="fact-item bg-light rounded text-center h-100 p-5">
-                <i class="fa fa-bread-slice fa-4x text-primary mb-4"></i>
-                <p class="mb-2">Total Products</p>
-                <h1 class="display-5 mb-0" data-toggle="counter-up">135</h1>
-              </div>
-            </div>
-            <div class="col-lg-6 col-md-6 wow fadeIn" data-wow-delay="0.7s">
-              <div class="fact-item bg-light rounded text-center h-100 p-5">
-                <i class="fa fa-cart-plus fa-4x text-primary mb-4"></i>
-                <p class="mb-2">Order Everyday</p>
-                <h1 class="display-5 mb-0" data-toggle="counter-up">9357</h1>
-              </div>
-            </div> -->
           </div>
         </div>
       </div>
@@ -265,13 +328,20 @@ export default {
     };
   },
   created() {
-    // this.$store.commit("SET_NOW_HOME");
-    // await this.$store.dispatch("getNews");
-    // console.log(this.$store.state.main.news);
-    // console.log("created : " + process.env.VUE_APP_OPENWEATHER_API_KEY);
-    console.log("created env: ", process.env);
-    this.getWeather();
-    //this.getNews();
+    this.$store.commit("SET_NOW_HOME");
+    console.log(this.$store.state.main.news);
+    console.log("geolocation" in navigator);
+    navigator.geolocation.getCurrentPosition((position) => {
+      this.$store.dispatch("getWeather", {
+        lat: position.coords.latitude,
+        lon: position.coords.longitude,
+        weatherState: "basic",
+      });
+      this.$store.dispatch("getLocation");
+
+      //console.log(position.coords.latitude);
+      //this.myArea = { lat: position.coords.latitude, lon: position.coords.longitude };
+    });
   },
   async mounted() {
     this.$store.commit("SET_NOW_HOME");
@@ -290,42 +360,6 @@ export default {
     openLink(link) {
       console.log(link);
       window.open(link, "_blank");
-    },
-    async getWeather() {
-      const API_KEY = process.env.VUE_APP_OPENWEATHER_API_KEY;
-      console.log("API KEY : " + API_KEY);
-      var lon = "129.0756416";
-      var lat = "35.1795543";
-      var $this = this;
-      fetch(
-        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`
-      )
-        .then(function (response) {
-          return response.json();
-        })
-        .then(function (json) {
-          console.log(json);
-          $this.weather = json;
-
-          var icons = {
-            i01: "fas fa-sun",
-            i02: "fas fa-cloud-sun",
-            i03: "fas fa-cloud",
-            i04: "fas fa-cloud-meatball",
-            i09: "fas fa-cloud-sun-rain",
-            i10: "fas fa-cloud-showers-heavy",
-            i11: "fas fa-poo-storm",
-            i13: "far fa-snowflake",
-            i50: "fas fa-smog",
-          };
-          var i = "i" + json.weather[0].icon.substr(0, 2);
-          $this.weatherIcon = icons[i];
-          console.log($this.weatherIcon);
-          //console.log("웨덜  " + $this.weather.weather[0].icon);
-          const temparature = json.main.temp; //온도
-          const place = json.name; // 사용자 위치
-          //weather.innerText = `${temparature} @${place}`;
-        });
     },
   },
 };

@@ -88,7 +88,7 @@
               </div>
               <div class="position-relative mt-auto">
                 <img
-                  src="img/aptimg.png"
+                  :src="aptRandom1.img"
                   alt=""
                   width="389.98"
                   height="292.48px"
@@ -121,10 +121,10 @@
               </div>
               <div class="position-relative mt-auto">
                 <img
-                  class="img-fluid"
-                  src="img/aptimg2.jpg"
+                  :src="aptRandom2.img"
                   alt=""
-                  height="50px"
+                  width="389.98"
+                  height="292.48px"
                 />
                 <div class="product-overlay">
                   <a

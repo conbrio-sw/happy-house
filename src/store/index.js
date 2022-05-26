@@ -83,6 +83,21 @@ export default new Vuex.Store({
 
     main: {
       news: [],
+      weather: {},
+      weatherIcon: "",
+      likeWeater: {},
+      likeWeatherIcon: "",
+      icons: {
+        i01: "fas fa-sun",
+        i02: "fas fa-cloud-sun",
+        i03: "fas fa-cloud",
+        i04: "fas fa-cloud-meatball",
+        i09: "fas fa-cloud-sun-rain",
+        i10: "fas fa-cloud-showers-heavy",
+        i11: "fas fa-poo-storm",
+        i13: "far fa-snowflake",
+        i50: "fas fa-smog",
+      },
     },
   },
   getters: {
@@ -179,6 +194,10 @@ export default new Vuex.Store({
       } else {
         return true;
       }
+    },
+    // 날씨
+    getWeather: function (state) {
+      return state.main.weather;
     },
   },
   mutations: {
@@ -369,6 +388,15 @@ export default new Vuex.Store({
     },
     SET_NEWS_LIST(state, list) {
       state.main.news = list;
+    },
+    SET_WEATHER_DATA(state, payload) {
+      state.main.weather = payload.weather;
+      state.main.weatherIcon = payload.weatherIcon;
+      console.log("setweather", state.main);
+    },
+    SET_LIKE_WEATHER_DATA(state, payload) {
+      state.main.likeWeather = payload.weather;
+      state.main.likeWeatherIcon = payload.weatherIcon;
     },
   },
   actions: {
@@ -578,6 +606,46 @@ export default new Vuex.Store({
         //console.log(tmp.title);
 
         await context.commit("SET_NEWS_LIST", tmp);
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    async getWeather(context, area) {
+      var API_KEY = process.env.VUE_APP_OPENWEATHER_API_KEY;
+      console.log("area : ", area);
+      var lon = area.lon; //"129.0756416";
+      var lat = area.lat; //"35.1795543";
+      var $this = this;
+      fetch(
+        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`
+      )
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (json) {
+          console.log(json);
+          var weather = json;
+          var i = "i" + json.weather[0].icon.substr(0, 2);
+          var data = { weather: weather, weatherIcon: $this.state.main.icons[i] };
+
+          //console.log(weatherState);
+          //console.log(weatherState == "basic");
+          if (area.weatherState == "basic") context.commit("SET_WEATHER_DATA", data);
+          else context.commit("SET_LIKE_WEATHER_DATA", data);
+        });
+    },
+    async getLocation() {
+      try {
+        let { data } = await http.get("/location?dongCode=" + this.state.myPage.dongCode);
+        let area = {
+          lat: data.lat * 1,
+          lon: data.lng * 1,
+          weatherState: "like",
+        };
+        this.dispatch("getWeather", area);
+        console.log(data);
+        //this.dispatch("getWeather");
+        //context.commit("SET_NEWS_LIST", tmp);
       } catch (error) {
         console.log(error);
       }

@@ -90,8 +90,8 @@
 
                     <a
                       type="button"
-                      class="btn btn-outline btn-default btn-xs"
-                      v-bind:href="file.fileUrl"
+                      class="btn btn-outline btn-default btn-xs download"
+                      v-bind:href="folder + file.fileUrl"
                       v-bind:download="file.fileName"
                       >내려받기</a
                     >

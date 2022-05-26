@@ -38,7 +38,7 @@
             </div>
           </div>
           <div class="position-relative mt-auto">
-            <img class="img-fluid" src="img/house/list.jpg" alt="" />
+            <img width="365px" height="243.33px" :src="house.img" alt="" />
             <div class="product-overlay">
               <a
                 class="btn btn-lg-square btn-outline-light rounded-circle"
