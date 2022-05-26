@@ -15,7 +15,8 @@
     <div class="row container-fluid pb-5">
       <!-- 뉴스 부분  -->
       <div class="container-xxl py-6 pb-0 col-6 mt-0">
-        <div class="container" style="width: 50%">
+        <div class="container" style="width: 524px">
+          <!-- style="width: 50%" -->
           <div
             class="text-center mx-auto mb-5 wow fadeInUp"
             data-wow-delay="0.1s"
@@ -41,7 +42,7 @@
                 <img
                   src="img/home/bg-test01.png"
                   width="30%"
-                  height="450px"
+                  height="345.50px"
                   class="d-block w-100"
                   alt="..."
                 />
@@ -135,7 +136,13 @@
             style="max-width: 500px"
           >
             <h1 class="display-6 mb-4">Today's Weather</h1>
-            <div class="row g-4 py-6">
+          </div>
+          <div
+            class="text-center mx-auto mb-5 wow fadeInUp"
+            data-wow-delay="0.1s"
+            style="max-width: 500px"
+          >
+            <div class="row g-4 pb-6">
               <div class="col-lg-6 col-md-6 wow fadeIn" data-wow-delay="0.1s">
                 <div class="fact-item bg-light rounded text-center h-100 p-5">
                   <!-- <img :src="`${weatherIcon}`" class="f mb-4" width="30%" /> -->

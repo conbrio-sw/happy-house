@@ -224,6 +224,20 @@ export default {
         this.getDong(this.gugunCode);
       }
     },
+    async searchDoubleApt() {
+      const params = {
+        dong: this.dongCode,
+        key: this.key,
+        word: this.word,
+        minValue: this.minValue,
+        maxValue: this.maxValue,
+      };
+      if (this.dongCode) {
+        await this.getHouseList(params);
+        this.displayMarkers(this.$store.getters.getAptList);
+        console.log(this.$store.getters.getAptList);
+      }
+    },
     async searchApt() {
       const params = {
         dong: this.dongCode,
@@ -235,8 +249,12 @@ export default {
       if (this.dongCode) {
         await this.getHouseList(params);
         this.displayMarkers(this.$store.getters.getAptList);
-        this.map.setBounds(this.bounds);
+        console.log(this.$store.getters.getAptList);
+        if (this.$store.getters.getAptList.length > 0)
+          this.map.setBounds(this.bounds);
       }
+
+      this.searchDoubleApt();
     },
     async initMap() {
       // 마커를 담을 배열입니다

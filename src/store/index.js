@@ -9,7 +9,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    // 0520수정
+
     isHome: true,
     isHouse: false,
     isShop: false,
@@ -18,46 +18,34 @@ export default new Vuex.Store({
     isMyPage: false,
     isRegister: false,
 
-    // 0520 수정
-    map: null,
-    makers: [],
-
     sidos: [{ value: null, text: "시/도" }],
     guguns: [{ value: null, text: "구/군" }],
     dongs: [{ value: null, text: "동" }],
     houses: [],
     house: null,
 
-
     shop: {
       list: [],
     },
-    // login, NavBar
+
     login: {
-      // NavBar
       isLogin: false,
       userName: "",
       userProfileImageUrl: "",
-      // Login
       userEmail: "admin@naver.com",
       userPassword: "admin",
     },
-    //
+
     board: {
-      // list
       list: [],
       limit: 10,
       offset: 0,
       searchWord: "",
 
-      // pagination
       listRowCount: 10,
       pageLinkCount: 10,
       currentPageIndex: 1,
-
       totalListItemCount: 0,
-
-      // detail, update, delete
 
       boardId: 0,
       title: "",
@@ -114,16 +102,6 @@ export default new Vuex.Store({
       return state.myPage.dong;
     },
 
-    completedTodosCount(state) {
-      return state.todos.filter((todo) => {
-        return todo.completed === true;
-      }).length;
-    },
-    unCompletedTodosCount(state) {
-      return state.todos.filter((todo) => {
-        return todo.completed === false;
-      }).length;
-    },
     getShopList: function (state) {
       return state.shop.list;
     },
@@ -468,15 +446,6 @@ export default new Vuex.Store({
     }
     ,
     async getHouseList({ commit }, params) {
-      // vue cli enviroment variables 검색
-      //.env.local file 생성.
-      // 반드시 VUE_APP으로 시작해야 한다.
-      // const SERVICE_KEY = "ll4XZIl2q/Lbq3oW4OOtKvgZddpzKjC46pwslkRCVHgKhlgPOxSuj/Ur5QwNWhfOSNJkO1WDc2LFXQSivp4kHA==";
-      // const SERVICE_KEY =
-      //   "9Xo0vlglWcOBGUDxH8PPbuKnlBwbWU6aO7%2Bk3FV4baF9GXok1yxIEF%2BIwr2%2B%2F%2F4oVLT8bekKU%2Bk9ztkJO0wsBw%3D%3D";
-      // const SERVICE_URL =
-      //   "http://openapi.molit.go.kr/OpenAPI_ToolInstallPackage/service/rest/RTMSOBJSvc/getRTMSDataSvcAptTradeDev";
-
 
       await http
         .get(`/map/apt`, { params })
@@ -489,8 +458,6 @@ export default new Vuex.Store({
         });
     },
     detailHouse({ commit }, house) {
-      // 나중에 house.일련번호를 이용하여 API 호출
-      // console.log(commit, house);
       commit("SET_DETAIL_HOUSE", house);
     },
     /////////////////////////////// House end /////////////////////////////////////
@@ -540,10 +507,6 @@ export default new Vuex.Store({
           };
 
           context.commit("SET_MYDATA", params);
-          //getDongName(data.dongCode);
-
-          //sessionStorage.setItem("userName", data.userName);
-          //sessionStorage.setItem("userEmail", data.userEmail);
         }
       } catch (error) {
         console.error(error);
@@ -589,11 +552,8 @@ export default new Vuex.Store({
         let data = await http.get("/api/server/news");
         var item = data.data.data; //JSON.parse(data.data.data); //JSON.stringify(data.data.items[0]);
         var items = JSON.parse(item);
-        //this.news = items.items;
         console.log(items.items);
         var tmp = [];
-        // console.log(this.news);
-        //.substr(0, 50)
         for (var i = 0; i < 10; i++) {
           tmp.push({
             title: items.items[i].title,
@@ -601,10 +561,7 @@ export default new Vuex.Store({
               items.items[i].description + "<b style='font-size:10px'>더보기</b>",
             originallink: items.items[i].originallink,
           });
-          //console.log("original " + tmp[i].originallink);
         }
-        //console.log(tmp.title);
-
         await context.commit("SET_NEWS_LIST", tmp);
       } catch (error) {
         console.log(error);
@@ -627,9 +584,6 @@ export default new Vuex.Store({
           var weather = json;
           var i = "i" + json.weather[0].icon.substr(0, 2);
           var data = { weather: weather, weatherIcon: $this.state.main.icons[i] };
-
-          //console.log(weatherState);
-          //console.log(weatherState == "basic");
           if (area.weatherState == "basic") context.commit("SET_WEATHER_DATA", data);
           else context.commit("SET_LIKE_WEATHER_DATA", data);
         });
@@ -644,8 +598,6 @@ export default new Vuex.Store({
         };
         this.dispatch("getWeather", area);
         console.log(data);
-        //this.dispatch("getWeather");
-        //context.commit("SET_NEWS_LIST", tmp);
       } catch (error) {
         console.log(error);
       }
@@ -654,7 +606,6 @@ export default new Vuex.Store({
   modules: {},
   plugins: [
     createPersistedState({
-      // 브라우저 종료시 제거하기 위해 localStorage가 아닌 sessionStorage로 변경. (default: localStorage)
       storage: sessionStorage,
     }),
   ],

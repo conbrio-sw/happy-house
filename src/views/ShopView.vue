@@ -68,7 +68,7 @@
               <button
                 type="button"
                 class="btn btn-outline-primary"
-                @click="shopList"
+                @click="[searchClear(), shopList()]"
               >
                 검색
               </button>
@@ -204,13 +204,11 @@
 <script>
 import http from "@/api/http";
 import "url-search-params-polyfill";
-import KakaoMap from "@/components/Map/KakaoMap.vue";
 import ShopListItem from "@/components/shop/ShopListItem.vue";
 import { mapState, mapActions, mapMutations } from "vuex";
 export default {
   name: "MyArea",
   components: {
-    KakaoMap,
     ShopListItem,
   },
   data() {

@@ -27,10 +27,10 @@
               <div class="col-sm-1" style="text-align: center">
                 {{ $store.state.board.boardId }}.
               </div>
-              <h3 class="card-title m-0 p-0 col-sm-9" style="line-height: 50px">
+              <h3 class="card-title m-0 p-0 col-sm-8" style="line-height: 50px">
                 {{ $store.state.board.title }}
               </h3>
-              <div class="col-sm-2">
+              <div class="col-sm-3">
                 <div style="text-align: right" class="px-2">
                   {{ $store.state.board.regDate }}
                   {{ $store.state.board.regTime }}
@@ -66,6 +66,7 @@
                       <img
                         :src="folder + file.fileUrl"
                         class="img-fluid"
+                        max-width="1000px"
                         alt=""
                       />
                     </div>
@@ -89,10 +90,10 @@
                     <span class="fileName">{{ file.fileName }}</span>
 
                     <a
-                      type="button"
-                      class="btn btn-outline btn-default btn-xs download"
-                      v-bind:href="folder + file.fileUrl"
+                      class="btn btn-outline btn-default btn-xs"
+                      v-bind:href="file.fileUrl"
                       v-bind:download="file.fileName"
+                      target="_self"
                       >내려받기</a
                     >
                   </div>

@@ -11,7 +11,7 @@ import UserUpdate from "@/views/UserUpdateView.vue";
 
 // news
 import News from "@/components/News.vue";
-import test from "@/views/test.vue";
+
 Vue.use(VueRouter);
 
 const routes = [
@@ -20,11 +20,7 @@ const routes = [
     name: "Home",
     component: HomeView,
   },
-  { 
-    path: "/test",
-    name: "Test",
-    component: test,
-  },
+
   {
     path: "/board",
     name: "Board",
@@ -72,11 +68,7 @@ const routes = [
     name: "News",
     component: News,
   },
-  {
-    path: "/kakao",
-    name: "KaKao",
-    component: () => import("@/components/Map/KakaoMap.vue"),
-  },
+
 ];
 
 const router = new VueRouter({
